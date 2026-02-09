@@ -10,7 +10,7 @@ services:
     environment:
       - NODE_ENV=production
       - DATABASE_URL=file:/app/data/prod.db
-      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+      - NEXTAUTH_URL=https://coffee.netarc.app
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
     volumes:
       # Persist SQLite database
