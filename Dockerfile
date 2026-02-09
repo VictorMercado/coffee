@@ -23,8 +23,10 @@ COPY . .
 RUN pnpm generate
 
 # Build the Next.js application
+# DATABASE_URL needed at build time for Prisma during Next.js prerendering
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN pnpm build
+ENV DATABASE_URL="file:/tmp/build.db"
+RUN npx prisma migrate deploy && pnpm build
 
 # Production stage
 FROM node:20-slim AS runner
