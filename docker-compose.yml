@@ -12,6 +12,7 @@ services:
       - DATABASE_URL=file:/app/data/prod.db
       - NEXTAUTH_URL=https://coffee.netarc.app
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - AUTH_TRUST_HOST=true
     volumes:
       # Persist SQLite database
       - orbit-data:/app/data
