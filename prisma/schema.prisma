@@ -1,0 +1,181 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// User model for authentication
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String?  // Optional email
+  password  String   // Hashed password
+  role      String   @default("USER") // USER or ADMIN
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders    Order[]
+}
+
+// Category model (Signature, Classic, Cold, Pastry)
+model Category {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  slug      String     @unique
+  icon      String?    // Icon name or emoji
+  isActive  Boolean    @default(true)
+  sortOrder Int        @default(0)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  menuItems MenuItem[]
+}
+
+// Size model (SM, MD, LG)
+model Size {
+  id            String         @id @default(cuid())
+  name          String         @unique
+  abbreviation  String         @unique // SM, MD, LG
+  priceModifier Float          @default(0)
+  isActive      Boolean        @default(true)
+  sortOrder     Int            @default(0)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  menuItems     MenuItemSize[]
+}
+
+// Tag model (popular, strong, sweet, etc.)
+model Tag {
+  id        String        @id @default(cuid())
+  name      String        @unique
+  slug      String        @unique
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  menuItems MenuItemTag[]
+}
+
+// Ingredient model
+model Ingredient {
+  id          String               @id @default(cuid())
+  name        String               @unique
+  description String?
+  allergens   String?              // Comma-separated allergen info
+  isActive    Boolean              @default(true)
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  menuItems   MenuItemIngredient[]
+}
+
+// MenuItem model - main menu item
+model MenuItem {
+  id          String               @id @default(cuid())
+  name        String
+  description String
+  basePrice   Float
+  categoryId  String
+  imagePath   String?              // e.g., "/images/menu/nebula-latte-uuid.jpg"
+  isActive    Boolean              @default(true)
+  isFeatured  Boolean              @default(false)
+  sortOrder   Int                  @default(0)
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  category    Category             @relation(fields: [categoryId], references: [id])
+  sizes       MenuItemSize[]
+  ingredients MenuItemIngredient[]
+  tags        MenuItemTag[]
+  recipeSteps RecipeStep[]
+}
+
+// Junction table: MenuItem <-> Size (many-to-many)
+model MenuItemSize {
+  menuItemId String
+  sizeId     String
+  isDefault  Boolean  @default(false)
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  size       Size     @relation(fields: [sizeId], references: [id], onDelete: Cascade)
+
+  @@id([menuItemId, sizeId])
+}
+
+// Junction table: MenuItem <-> Ingredient (many-to-many with extra fields)
+model MenuItemIngredient {
+  menuItemId   String
+  ingredientId String
+  quantity     String?    // "2 shots", "8 oz"
+  isOptional   Boolean    @default(false)
+  sortOrder    Int        @default(0)
+  menuItem     MenuItem   @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+
+  @@id([menuItemId, ingredientId])
+}
+
+// Junction table: MenuItem <-> Tag (many-to-many)
+model MenuItemTag {
+  menuItemId String
+  tagId      String
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  tag        Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([menuItemId, tagId])
+}
+
+// RecipeStep model - ordered steps for each menu item
+model RecipeStep {
+  id          String   @id @default(cuid())
+  menuItemId  String
+  stepNumber  Int      // 1, 2, 3...
+  instruction String
+  duration    String?  // "30 seconds"
+  temperature String?  // "195°F"
+  menuItem    MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+
+  @@unique([menuItemId, stepNumber])
+}
+
+// Order model - customer orders
+model Order {
+  id             String      @id @default(cuid())
+  orderNumber    String      @unique // Human-readable order number
+  userId         String?     // Optional - null for guest orders
+  customerName   String
+  customerEmail  String?
+  status         String      @default("PENDING") // PENDING, PREPARING, READY, COMPLETED, CANCELLED
+  subtotal       Float
+  tax            Float
+  total          Float
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  user           User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  items          OrderItem[]
+}
+
+// OrderItem model - items in an order
+model OrderItem {
+  id         String   @id @default(cuid())
+  orderId    String
+  menuItemId String
+  name       String   // Store name at time of order
+  size       String   // SM, MD, LG
+  quantity   Int
+  price      Float    // Price at time of order
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+}
+
+// Settings model - app configuration
+model Settings {
+  id             String   @id @default(cuid())
+  pricingEnabled Boolean  @default(true) // Enable/disable pricing throughout the app
+  storeName      String   @default("Orbit Coffee")
+  storeAddress   String   @default("123 Space Station Blvd\nLunar Colony, Moon 90210")
+  storePhone     String   @default("(555) 123-4567")
+  taxRate        Float    @default(8.0)
+  prepTime       Int      @default(15) // Average prep time in minutes
+  updatedAt      DateTime @updatedAt
+}

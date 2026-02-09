@@ -1,0 +1,48 @@
+# Docker
+.next
+node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+.pnpm-debug.log
+
+# Git
+.git
+.gitignore
+
+# Development
+.env
+.env.local
+.env.development
+.env.test
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+Thumbs.db
+
+# Prisma dev database (production will be in /app/data)
+prisma/dev.db
+prisma/dev.db-journal
+
+# Docs and markdown files
+*.md
+!README.md
+
+# Tests
+__tests__
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+coverage
+.nyc_output
+
+# Misc
+.claude
+.github

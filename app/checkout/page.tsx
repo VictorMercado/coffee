@@ -1,0 +1,15 @@
+import { auth } from "@/lib/auth"
+import { CheckoutContent } from "@/components/checkout-content"
+
+export default async function CheckoutPage() {
+  const session = await auth()
+
+  const user = session?.user || {
+    id: "guest",
+    username: "guest",
+    email: null,
+    role: "USER",
+  }
+
+  return <CheckoutContent user={user} />
+}

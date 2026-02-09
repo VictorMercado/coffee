@@ -1,0 +1,31 @@
+services:
+  orbit-coffee:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: orbit-coffee
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:/app/data/prod.db
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+    volumes:
+      # Persist SQLite database
+      - orbit-data:/app/data
+      # Persist uploaded images if any
+      - orbit-uploads:/app/public/uploads
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  orbit-data:
+    driver: local
+  orbit-uploads:
+    driver: local
