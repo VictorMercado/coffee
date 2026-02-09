@@ -41,6 +41,12 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.pnpm/@prisma+client* ./node_modules/.pnpm/
+COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
+COPY --from=builder /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
+
+# Copy entrypoint script
+COPY docker-entrypoint.sh ./
+RUN chmod +x docker-entrypoint.sh
 
 # Create directory for SQLite database with proper permissions
 RUN mkdir -p /app/data && chown -R nextjs:nodejs /app/data
@@ -56,4 +62,5 @@ ENV HOSTNAME="0.0.0.0"
 
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
+
