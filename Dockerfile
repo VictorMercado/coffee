@@ -1,7 +1,10 @@
 # Build stage
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
 
 WORKDIR /app
+
+# Install OpenSSL (required by Prisma)
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 # Install pnpm (v8 for lockfile v6.0 compatibility)
 RUN corepack enable && corepack prepare pnpm@8 --activate
@@ -24,12 +27,12 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN pnpm build
 
 # Production stage
-FROM node:20-alpine AS runner
+FROM node:20-slim AS runner
 
 WORKDIR /app
 
-# Install pnpm (v8 for lockfile v6.0 compatibility)
-RUN corepack enable && corepack prepare pnpm@8 --activate
+# Install OpenSSL (required by Prisma at runtime)
+RUN apt-get update && apt-get install -y openssl wget && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user for security
 RUN addgroup --system --gid 1001 nodejs && \
@@ -63,4 +66,3 @@ ENV HOSTNAME="0.0.0.0"
 EXPOSE 3000
 
 ENTRYPOINT ["./docker-entrypoint.sh"]
-
