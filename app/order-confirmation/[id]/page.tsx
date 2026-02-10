@@ -1,6 +1,8 @@
-import { notFound } from "next/navigation"
-import { prisma } from "@/lib/prisma"
-import { OrderConfirmationContent } from "@/components/order-confirmation-content"
+import { notFound } from "next/navigation";
+import { prisma } from "@/lib/prisma";
+import { OrderConfirmationContent } from "@/components/order-confirmation-content";
+
+export const dynamic = "force-dynamic";
 
 async function getOrder(id: string) {
   const order = await prisma.order.findUnique({
@@ -8,10 +10,10 @@ async function getOrder(id: string) {
     include: {
       items: true,
     },
-  })
+  });
 
   if (!order) {
-    return null
+    return null;
   }
 
   return {
@@ -31,20 +33,20 @@ async function getOrder(id: string) {
       quantity: item.quantity,
       price: item.price,
     })),
-  }
+  };
 }
 
 export default async function OrderConfirmationPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string; }>;
 }) {
-  const { id } = await params
-  const order = await getOrder(id)
+  const { id } = await params;
+  const order = await getOrder(id);
 
   if (!order) {
-    notFound()
+    notFound();
   }
 
-  return <OrderConfirmationContent order={order} />
+  return <OrderConfirmationContent order={order} />;
 }

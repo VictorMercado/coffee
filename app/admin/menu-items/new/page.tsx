@@ -1,6 +1,8 @@
-import { prisma } from "@/lib/prisma"
-import { AdminHeader } from "@/components/admin/admin-header"
-import { MenuItemFormWrapper } from "@/components/admin/menu-item-form-wrapper"
+import { prisma } from "@/lib/prisma";
+import { AdminHeader } from "@/components/admin/admin-header";
+import { MenuItemForm } from "@/components/admin/menu-item-form";
+
+export const dynamic = "force-dynamic";
 
 async function getFormData() {
   const [categories, sizes, tags, ingredients] = await Promise.all([
@@ -19,7 +21,7 @@ async function getFormData() {
       where: { isActive: true },
       orderBy: { name: "asc" },
     }),
-  ])
+  ]);
 
   return {
     categories: categories.map((c) => ({
@@ -42,11 +44,11 @@ async function getFormData() {
       name: i.name,
       description: i.description,
     })),
-  }
+  };
 }
 
 export default async function NewMenuItemPage() {
-  const data = await getFormData()
+  const data = await getFormData();
 
   return (
     <>
@@ -55,7 +57,7 @@ export default async function NewMenuItemPage() {
         description="Add a new item to the menu"
       />
       <div className="container mx-auto p-8">
-        <MenuItemFormWrapper
+        <MenuItemForm
           categories={data.categories}
           sizes={data.sizes}
           tags={data.tags}
@@ -63,5 +65,5 @@ export default async function NewMenuItemPage() {
         />
       </div>
     </>
-  )
+  );
 }

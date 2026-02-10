@@ -1,6 +1,8 @@
-import { prisma } from "@/lib/prisma"
-import { AdminHeader } from "@/components/admin/admin-header"
-import { MenuItemsList } from "@/components/admin/menu-items-list"
+import { prisma } from "@/lib/prisma";
+import { AdminHeader } from "@/components/admin/admin-header";
+import { MenuItemsList } from "@/components/admin/menu-items-list";
+
+export const dynamic = "force-dynamic";
 
 async function getMenuItems() {
   const menuItems = await prisma.menuItem.findMany({
@@ -10,7 +12,7 @@ async function getMenuItems() {
     orderBy: {
       createdAt: "desc",
     },
-  })
+  });
 
   return menuItems.map((item) => ({
     id: item.id,
@@ -20,11 +22,11 @@ async function getMenuItems() {
     category: { name: item.category.name },
     isActive: item.isActive,
     isFeatured: item.isFeatured,
-  }))
+  }));
 }
 
 export default async function AdminMenuItemsPage() {
-  const menuItems = await getMenuItems()
+  const menuItems = await getMenuItems();
 
   return (
     <>
@@ -34,5 +36,5 @@ export default async function AdminMenuItemsPage() {
       />
       <MenuItemsList initialItems={menuItems} />
     </>
-  )
+  );
 }

@@ -1,49 +1,51 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Checkbox } from "@/components/ui/checkbox"
-import { ImageUpload } from "./image-upload"
-import { RecipeStepsEditor, RecipeStep } from "./recipe-steps-editor"
-import { IngredientSelector, SelectedIngredient } from "./ingredient-selector"
-import { TagSelector } from "./tag-selector"
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ImageUpload } from "./image-upload";
+import { RecipeStepsEditor, RecipeStep } from "./recipe-steps-editor";
+import { IngredientSelector, SelectedIngredient } from "./ingredient-selector";
+import { TagSelector } from "./tag-selector";
+import { createMenuItem, updateMenuItem, uploadMenuItemImage } from "@/lib/client/api/menu-items";
+import type { CreateMenuItemInput } from "@/lib/client/api/menu-items";
 
 interface Category {
-  id: string
-  name: string
-  slug: string
+  id: string;
+  name: string;
+  slug: string;
 }
 
 interface Size {
-  id: string
-  name: string
-  abbreviation: string
+  id: string;
+  name: string;
+  abbreviation: string;
+  priceModifier?: number;
 }
 
 interface Tag {
-  id: string
-  name: string
+  id: string;
+  name: string;
 }
 
 interface Ingredient {
-  id: string
-  name: string
-  description?: string | null
+  id: string;
+  name: string;
+  description?: string | null;
 }
 
 interface MenuItemFormProps {
-  menuItemId?: string
-  initialData?: any
-  categories: Category[]
-  sizes: Size[]
-  tags: Tag[]
-  ingredients: Ingredient[]
-  onSubmit: (data: any, imageFile: File | null) => void
-  isSubmitting: boolean
+  menuItemId?: string;
+  initialData?: any;
+  categories: Category[];
+  sizes: Size[];
+  tags: Tag[];
+  ingredients: Ingredient[];
 }
 
 export function MenuItemForm({
@@ -53,51 +55,79 @@ export function MenuItemForm({
   sizes,
   tags,
   ingredients: availableIngredients,
-  onSubmit,
-  isSubmitting
 }: MenuItemFormProps) {
-  const router = useRouter()
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
   // Form state
-  const [name, setName] = useState(initialData?.name || "")
-  const [description, setDescription] = useState(initialData?.description || "")
+  const [name, setName] = useState(initialData?.name || "");
+  const [description, setDescription] = useState(initialData?.description || "");
   const [basePrice, setBasePrice] = useState(
     initialData?.basePrice?.toString() || ""
-  )
-  const [categoryId, setCategoryId] = useState(initialData?.categoryId || "")
-  const [isActive, setIsActive] = useState(initialData?.isActive ?? true)
-  const [isFeatured, setIsFeatured] = useState(initialData?.isFeatured ?? false)
+  );
+  const [categoryId, setCategoryId] = useState(initialData?.categoryId || "");
+  const [isActive, setIsActive] = useState(initialData?.isActive ?? true);
+  const [isFeatured, setIsFeatured] = useState(initialData?.isFeatured ?? false);
   const [sortOrder, setSortOrder] = useState(
     initialData?.sortOrder?.toString() || "0"
-  )
-  const [imageFile, setImageFile] = useState<File | null>(null)
+  );
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [selectedSizeIds, setSelectedSizeIds] = useState<string[]>(
     initialData?.sizes?.map((s: any) => s.sizeId || s.id).filter(Boolean) || []
-  )
+  );
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>(
     initialData?.tags?.map((t: any) => t.tagId || t.id).filter(Boolean) || []
-  )
-  const [ingredients, setIngredients] = useState<SelectedIngredient[]>(
+  );
+  const [selectedIngredients, setSelectedIngredients] = useState<SelectedIngredient[]>(
     initialData?.ingredients?.map((ing: any) => ({
       ingredientId: ing.ingredientId || ing.id,
       quantity: ing.quantity,
       isOptional: ing.isOptional,
       sortOrder: ing.sortOrder || 0,
     })).filter((ing: any) => ing.ingredientId) || []
-  )
+  );
   const [recipeSteps, setRecipeSteps] = useState<RecipeStep[]>(
     initialData?.recipeSteps || []
-  )
+  );
 
   // Set default category if not set
   useEffect(() => {
     if (!categoryId && categories.length > 0) {
-      setCategoryId(categories[0].id)
+      setCategoryId(categories[0].id);
     }
-  }, [categories, categoryId])
+  }, [categories, categoryId]);
+
+  // Mutation for save
+  const saveMutation = useMutation({
+    mutationFn: async ({
+      data,
+      imageFile,
+    }: {
+      data: CreateMenuItemInput;
+      imageFile: File | null;
+    }) => {
+      const savedItem = menuItemId
+        ? await updateMenuItem(menuItemId, data)
+        : await createMenuItem(data);
+
+      if (imageFile) {
+        await uploadMenuItemImage(savedItem.id, imageFile);
+      }
+
+      return savedItem;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["menuItems"] });
+      router.push("/admin/menu-items");
+      router.refresh();
+    },
+    onError: (error: Error) => {
+      alert(`Error:\n${error.message}`);
+    },
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     const formData = {
       name,
@@ -109,15 +139,15 @@ export function MenuItemForm({
       sortOrder: parseInt(sortOrder),
       sizeIds: selectedSizeIds,
       tagIds: selectedTagIds,
-      ingredients,
+      ingredients: selectedIngredients,
       recipeSteps,
-    }
+    };
 
-    onSubmit(formData, imageFile)
-  }
+    saveMutation.mutate({ data: formData as any, imageFile });
+  };
 
-  const selectedCategory = categories.find((c) => c.id === categoryId)
-  const isPastry = selectedCategory?.slug === "pastry"
+  const selectedCategory = categories.find((c) => c.id === categoryId);
+  const isPastry = selectedCategory?.slug === "pastry";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
@@ -268,11 +298,11 @@ export function MenuItemForm({
                   checked={selectedSizeIds.includes(size.id)}
                   onCheckedChange={(checked) => {
                     if (checked) {
-                      setSelectedSizeIds([...selectedSizeIds, size.id])
+                      setSelectedSizeIds([...selectedSizeIds, size.id]);
                     } else {
                       setSelectedSizeIds(
                         selectedSizeIds.filter((id) => id !== size.id)
-                      )
+                      );
                     }
                   }}
                   className="border-border"
@@ -303,8 +333,8 @@ export function MenuItemForm({
       <div className="space-y-4 border border-border bg-card p-6">
         <h3 className="font-mono text-lg text-primary">INGREDIENTS</h3>
         <IngredientSelector
-          selectedIngredients={ingredients}
-          onChange={setIngredients}
+          selectedIngredients={selectedIngredients}
+          onChange={setSelectedIngredients}
           availableIngredients={availableIngredients}
         />
       </div>
@@ -319,10 +349,10 @@ export function MenuItemForm({
       <div className="flex gap-4">
         <Button
           type="submit"
-          disabled={isSubmitting}
+          disabled={saveMutation.isPending}
           className="bg-primary font-mono text-background hover:bg-primary/80"
         >
-          {isSubmitting ? "SAVING..." : menuItemId ? "UPDATE ITEM" : "CREATE ITEM"}
+          {saveMutation.isPending ? "SAVING..." : menuItemId ? "UPDATE ITEM" : "CREATE ITEM"}
         </Button>
         <Button
           type="button"
@@ -334,5 +364,5 @@ export function MenuItemForm({
         </Button>
       </div>
     </form>
-  )
+  );
 }

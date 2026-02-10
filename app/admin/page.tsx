@@ -1,8 +1,10 @@
-import Link from "next/link"
-import { prisma } from "@/lib/prisma"
-import { AdminHeader } from "@/components/admin/admin-header"
-import { Button } from "@/components/ui/button"
-import { ArrowRight, Coffee, Star, Eye, EyeOff } from "lucide-react"
+import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+import { AdminHeader } from "@/components/admin/admin-header";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Coffee, Star, Eye, EyeOff } from "lucide-react";
+
+export const dynamic = "force-dynamic";
 
 async function getDashboardData() {
   const [
@@ -42,7 +44,7 @@ async function getDashboardData() {
         },
       },
     }),
-  ])
+  ]);
 
   return {
     stats: {
@@ -71,11 +73,11 @@ async function getDashboardData() {
       name: c.name,
       count: c.menuItems.length,
     })),
-  }
+  };
 }
 
 export default async function AdminDashboard() {
-  const data = await getDashboardData()
+  const data = await getDashboardData();
 
   return (
     <>
@@ -235,11 +237,10 @@ export default async function AdminDashboard() {
                     </div>
                     <div className="flex items-center gap-3">
                       <span
-                        className={`px-2 py-0.5 font-mono text-xs ${
-                          item.isActive
+                        className={`px-2 py-0.5 font-mono text-xs ${item.isActive
                             ? "bg-green-900/30 text-green-400"
                             : "bg-red-900/30 text-red-400"
-                        }`}
+                          }`}
                       >
                         {item.isActive ? "ACTIVE" : "INACTIVE"}
                       </span>
@@ -255,5 +256,5 @@ export default async function AdminDashboard() {
         </div>
       </div>
     </>
-  )
+  );
 }

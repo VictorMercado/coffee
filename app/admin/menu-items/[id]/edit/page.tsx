@@ -1,7 +1,9 @@
-import { notFound } from "next/navigation"
-import { prisma } from "@/lib/prisma"
-import { AdminHeader } from "@/components/admin/admin-header"
-import { MenuItemFormWrapper } from "@/components/admin/menu-item-form-wrapper"
+import { notFound } from "next/navigation";
+import { prisma } from "@/lib/prisma";
+import { AdminHeader } from "@/components/admin/admin-header";
+import { MenuItemForm } from "@/components/admin/menu-item-form";
+
+export const dynamic = "force-dynamic";
 
 async function getMenuItemData(id: string) {
   const [menuItem, categories, sizes, tags, ingredients] = await Promise.all([
@@ -39,10 +41,10 @@ async function getMenuItemData(id: string) {
       where: { isActive: true },
       orderBy: { name: "asc" },
     }),
-  ])
+  ]);
 
   if (!menuItem) {
-    return null
+    return null;
   }
 
   // Transform data
@@ -82,7 +84,7 @@ async function getMenuItemData(id: string) {
       duration: step.duration,
       temperature: step.temperature,
     })),
-  }
+  };
 
   return {
     menuItem: transformedMenuItem,
@@ -106,19 +108,19 @@ async function getMenuItemData(id: string) {
       name: i.name,
       description: i.description,
     })),
-  }
+  };
 }
 
 export default async function EditMenuItemPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string; }>;
 }) {
-  const { id } = await params
-  const data = await getMenuItemData(id)
+  const { id } = await params;
+  const data = await getMenuItemData(id);
 
   if (!data) {
-    notFound()
+    notFound();
   }
 
   return (
@@ -128,7 +130,7 @@ export default async function EditMenuItemPage({
         description={`Editing: ${data.menuItem.name}`}
       />
       <div className="container mx-auto p-8">
-        <MenuItemFormWrapper
+        <MenuItemForm
           menuItemId={id}
           initialData={data.menuItem}
           categories={data.categories}
@@ -138,5 +140,5 @@ export default async function EditMenuItemPage({
         />
       </div>
     </>
-  )
+  );
 }

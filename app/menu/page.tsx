@@ -1,6 +1,8 @@
-import { prisma } from "@/lib/prisma"
-import { MenuContent } from "@/components/menu-content"
-import { MenuItem } from "@/lib/client/api/menu-items"
+import { prisma } from "@/lib/prisma";
+import { MenuContent } from "@/components/menu-content";
+import { MenuItem } from "@/lib/client/api/menu-items";
+
+export const dynamic = "force-dynamic";
 
 async function getMenuData() {
   const [menuItems, categories] = await Promise.all([
@@ -33,7 +35,7 @@ async function getMenuData() {
         sortOrder: "asc",
       },
     }),
-  ])
+  ]);
 
   return {
     menuItems: menuItems.map((item) => ({
@@ -62,11 +64,11 @@ async function getMenuData() {
       slug: c.slug,
       icon: c.icon,
     })),
-  }
+  };
 }
 
 export default async function MenuPage() {
-  const { menuItems, categories } = await getMenuData()
+  const { menuItems, categories } = await getMenuData();
 
-  return <MenuContent menuItems={menuItems} categories={categories} />
+  return <MenuContent menuItems={menuItems} categories={categories} />;
 }

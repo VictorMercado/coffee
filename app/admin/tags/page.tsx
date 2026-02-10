@@ -1,6 +1,8 @@
-import { prisma } from "@/lib/prisma"
-import { AdminHeader } from "@/components/admin/admin-header"
-import { TagsList } from "@/components/admin/tags-list"
+import { prisma } from "@/lib/prisma";
+import { AdminHeader } from "@/components/admin/admin-header";
+import { TagsList } from "@/components/admin/tags-list";
+
+export const dynamic = "force-dynamic";
 
 async function getTags() {
   const tags = await prisma.tag.findMany({
@@ -10,18 +12,18 @@ async function getTags() {
         select: { menuItems: true },
       },
     },
-  })
+  });
 
   return tags.map((tag) => ({
     id: tag.id,
     name: tag.name,
     slug: tag.slug,
     menuItemCount: tag._count.menuItems,
-  }))
+  }));
 }
 
 export default async function TagsPage() {
-  const tags = await getTags()
+  const tags = await getTags();
 
   return (
     <>
@@ -31,5 +33,5 @@ export default async function TagsPage() {
       />
       <TagsList initialTags={tags} />
     </>
-  )
+  );
 }

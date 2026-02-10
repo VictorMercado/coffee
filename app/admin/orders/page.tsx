@@ -1,6 +1,8 @@
-import { prisma } from "@/lib/prisma"
-import { AdminHeader } from "@/components/admin/admin-header"
-import { OrdersList } from "@/components/admin/orders-list"
+import { prisma } from "@/lib/prisma";
+import { AdminHeader } from "@/components/admin/admin-header";
+import { OrdersList } from "@/components/admin/orders-list";
+
+export const dynamic = "force-dynamic";
 
 async function getOrders() {
   const orders = await prisma.order.findMany({
@@ -8,7 +10,7 @@ async function getOrders() {
     include: {
       items: true,
     },
-  })
+  });
 
   return orders.map((order) => ({
     id: order.id,
@@ -28,11 +30,11 @@ async function getOrders() {
       quantity: item.quantity,
       price: item.price,
     })),
-  }))
+  }));
 }
 
 export default async function AdminOrdersPage() {
-  const orders = await getOrders()
+  const orders = await getOrders();
 
   return (
     <>
@@ -42,5 +44,5 @@ export default async function AdminOrdersPage() {
       />
       <OrdersList initialOrders={orders} />
     </>
-  )
+  );
 }

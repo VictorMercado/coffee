@@ -1,7 +1,9 @@
-import { notFound } from "next/navigation"
-import { prisma } from "@/lib/prisma"
-import { AdminHeader } from "@/components/admin/admin-header"
-import { CategoryForm } from "@/components/admin/category-form"
+import { notFound } from "next/navigation";
+import { prisma } from "@/lib/prisma";
+import { AdminHeader } from "@/components/admin/admin-header";
+import { CategoryForm } from "@/components/admin/category-form";
+
+export const dynamic = "force-dynamic";
 
 async function getCategory(id: string) {
   const category = await prisma.category.findUnique({
@@ -11,10 +13,10 @@ async function getCategory(id: string) {
         select: { menuItems: true },
       },
     },
-  })
+  });
 
   if (!category) {
-    return null
+    return null;
   }
 
   return {
@@ -25,19 +27,19 @@ async function getCategory(id: string) {
     isActive: category.isActive,
     sortOrder: category.sortOrder,
     menuItemCount: category._count.menuItems,
-  }
+  };
 }
 
 export default async function EditCategoryPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string; }>;
 }) {
-  const { id } = await params
-  const category = await getCategory(id)
+  const { id } = await params;
+  const category = await getCategory(id);
 
   if (!category) {
-    notFound()
+    notFound();
   }
 
   return (
@@ -50,5 +52,5 @@ export default async function EditCategoryPage({
         <CategoryForm category={category} />
       </div>
     </>
-  )
+  );
 }

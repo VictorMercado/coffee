@@ -1,6 +1,8 @@
-import { prisma } from "@/lib/prisma"
-import { HomeContent } from "@/components/home-content"
-import { MenuItem } from "@/lib/client/api/menu-items"
+import { prisma } from "@/lib/prisma";
+import { HomeContent } from "@/components/home-content";
+import { MenuItem } from "@/lib/client/api/menu-items";
+
+export const dynamic = "force-dynamic";
 
 async function getFeaturedItems(): Promise<MenuItem[]> {
   const menuItems = await prisma.menuItem.findMany({
@@ -25,7 +27,7 @@ async function getFeaturedItems(): Promise<MenuItem[]> {
       sortOrder: "asc",
     },
     take: 4, // Show max 4 featured items
-  })
+  });
 
   // Transform to match MenuItem interface
   return menuItems.map((item) => ({
@@ -45,11 +47,11 @@ async function getFeaturedItems(): Promise<MenuItem[]> {
       priceModifier: s.size.priceModifier,
     })),
     tags: item.tags.map((t) => t.tag.name),
-  }))
+  }));
 }
 
 export default async function Home() {
-  const featuredItems = await getFeaturedItems()
+  const featuredItems = await getFeaturedItems();
 
-  return <HomeContent featuredItems={featuredItems} />
+  return <HomeContent featuredItems={featuredItems} />;
 }

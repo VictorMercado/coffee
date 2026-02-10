@@ -1,6 +1,8 @@
-import { prisma } from "@/lib/prisma"
-import { AdminHeader } from "@/components/admin/admin-header"
-import { CategoriesList } from "@/components/admin/categories-list"
+import { prisma } from "@/lib/prisma";
+import { AdminHeader } from "@/components/admin/admin-header";
+import { CategoriesList } from "@/components/admin/categories-list";
+
+export const dynamic = "force-dynamic";
 
 async function getCategories() {
   const categories = await prisma.category.findMany({
@@ -10,7 +12,7 @@ async function getCategories() {
         select: { menuItems: true },
       },
     },
-  })
+  });
 
   return categories.map((cat) => ({
     id: cat.id,
@@ -20,11 +22,11 @@ async function getCategories() {
     isActive: cat.isActive,
     sortOrder: cat.sortOrder,
     menuItemCount: cat._count.menuItems,
-  }))
+  }));
 }
 
 export default async function CategoriesPage() {
-  const categories = await getCategories()
+  const categories = await getCategories();
 
   return (
     <>
@@ -34,5 +36,5 @@ export default async function CategoriesPage() {
       />
       <CategoriesList initialCategories={categories} />
     </>
-  )
+  );
 }

@@ -1,29 +1,29 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Plus, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
+import { useState, useEffect } from "react";
+import { Plus, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export interface SelectedIngredient {
-  ingredientId: string
-  quantity?: string
-  isOptional: boolean
-  sortOrder: number
+  ingredientId: string;
+  quantity?: string;
+  isOptional: boolean;
+  sortOrder: number;
 }
 
 interface Ingredient {
-  id: string
-  name: string
-  description?: string | null
+  id: string;
+  name: string;
+  description?: string | null;
 }
 
 interface IngredientSelectorProps {
-  selectedIngredients: SelectedIngredient[]
-  onChange: (ingredients: SelectedIngredient[]) => void
-  availableIngredients: Ingredient[]
+  selectedIngredients: SelectedIngredient[];
+  onChange: (ingredients: SelectedIngredient[]) => void;
+  availableIngredients: Ingredient[];
 }
 
 export function IngredientSelector({
@@ -31,12 +31,12 @@ export function IngredientSelector({
   onChange,
   availableIngredients: allIngredients,
 }: IngredientSelectorProps) {
-  const [ingredients, setIngredients] = useState<Ingredient[]>(allIngredients)
-  const [showDropdown, setShowDropdown] = useState(false)
+  const [ingredients, setIngredients] = useState<Ingredient[]>(allIngredients);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
-    setIngredients(allIngredients)
-  }, [allIngredients])
+    setIngredients(allIngredients);
+  }, [allIngredients]);
 
   const addIngredient = (ingredient: Ingredient) => {
     const newIngredient: SelectedIngredient = {
@@ -44,16 +44,16 @@ export function IngredientSelector({
       quantity: "",
       isOptional: false,
       sortOrder: selectedIngredients.length,
-    }
-    onChange([...selectedIngredients, newIngredient])
-    setShowDropdown(false)
-  }
+    };
+    onChange([...selectedIngredients, newIngredient]);
+    setShowDropdown(false);
+  };
 
   const removeIngredient = (ingredientId: string) => {
     onChange(
       selectedIngredients.filter((i) => i.ingredientId !== ingredientId)
-    )
-  }
+    );
+  };
 
   const updateIngredient = (
     ingredientId: string,
@@ -63,21 +63,21 @@ export function IngredientSelector({
       selectedIngredients.map((i) =>
         i.ingredientId === ingredientId ? { ...i, ...updates } : i
       )
-    )
-  }
+    );
+  };
 
   const availableToAdd = ingredients.filter(
     (ing) =>
       !selectedIngredients.some((sel) => sel.ingredientId === ing.id)
-  )
+  );
 
   return (
     <div className="space-y-4">
       {selectedIngredients.map((selectedIng) => {
         const ingredient = ingredients.find(
           (i) => i.id === selectedIng.ingredientId
-        )
-        if (!ingredient) return null
+        );
+        if (!ingredient) return null;
 
         return (
           <div
@@ -132,13 +132,13 @@ export function IngredientSelector({
               <X className="h-4 w-4" />
             </Button>
           </div>
-        )
+        );
       })}
 
       <div className="relative">
         <Button
           type="button"
-          onClick={() => setShowDropdown(!showDropdown)}
+          onClick={() => setShowDropdown(true)}
           variant="outline"
           className="w-full border-[#FF6B35] font-mono text-[#FF6B35] hover:bg-[#FF6B35] hover:text-[#1A0F08]"
         >
@@ -160,7 +160,14 @@ export function IngredientSelector({
             ))}
           </div>
         )}
+        {showDropdown && availableToAdd.length === 0 && (
+          <div className="absolute z-10 mt-2 w-full border border-[#FF6B35] bg-[#1A0F08] px-4 py-3 font-mono text-sm text-[#F5F5DC]/60">
+            {ingredients.length === 0
+              ? "No ingredients found. Add ingredients in the Ingredients section first."
+              : "All ingredients have been added."}
+          </div>
+        )}
       </div>
     </div>
-  )
+  );
 }

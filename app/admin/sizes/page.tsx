@@ -1,5 +1,7 @@
-import { prisma } from "@/lib/prisma"
-import { SizesList } from "@/components/admin/sizes-list"
+import { prisma } from "@/lib/prisma";
+import { SizesList } from "@/components/admin/sizes-list";
+
+export const dynamic = "force-dynamic";
 
 async function getSizes() {
   const sizes = await prisma.size.findMany({
@@ -9,7 +11,7 @@ async function getSizes() {
         select: { menuItems: true },
       },
     },
-  })
+  });
 
   return sizes.map((size) => ({
     id: size.id,
@@ -19,11 +21,11 @@ async function getSizes() {
     isActive: size.isActive,
     sortOrder: size.sortOrder,
     menuItemCount: size._count.menuItems,
-  }))
+  }));
 }
 
 export default async function SizesPage() {
-  const sizes = await getSizes()
+  const sizes = await getSizes();
 
-  return <SizesList sizes={sizes} />
+  return <SizesList sizes={sizes} />;
 }
