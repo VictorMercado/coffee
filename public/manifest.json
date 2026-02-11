@@ -2,10 +2,10 @@
   "name": "Orbit Coffee",
   "short_name": "Orbit Coffee",
   "description": "Experience coffee from the future. Premium brews crafted with atomic precision.",
-  "start_url": "/menu",
+  "start_url": "/",
   "display": "standalone",
-  "background_color": "#0b0401",
-  "theme_color": "#0b0401",
+  "background_color": "#000000",
+  "theme_color": "#000000",
   "orientation": "portrait-primary",
   "icons": [
     {
