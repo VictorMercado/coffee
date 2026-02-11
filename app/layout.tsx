@@ -1,5 +1,5 @@
 import React from "react";
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Space_Grotesk, Orbitron } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import { AuthProvider } from '@/components/providers/auth-provider';
@@ -10,11 +10,18 @@ import './globals.css';
 const _spaceGrotesk = Space_Grotesk({ subsets: ["latin"] });
 const _orbitron = Orbitron({ subsets: ["latin"] });
 
+export const viewport: Viewport = {
+  themeColor: '#000000',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 export const metadata: Metadata = {
   title: 'ORBIT COFFEE - Retro Futuristic Brews',
   description: 'Experience coffee from the future. Premium brews crafted with atomic precision.',
   manifest: '/manifest.json',
-  themeColor: '#FF6B35',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
@@ -49,10 +56,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-      </head>
-      <body className={`font-sans antialiased`}>
+      <body className="font-sans antialiased overscroll-y-none">
         <QueryProvider>
           <AuthProvider>
             <SettingsProvider>
