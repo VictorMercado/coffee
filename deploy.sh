@@ -37,6 +37,9 @@ fi
 echo -e "${YELLOW}🧹 Cleaning up old images...${NC}"
 docker image prune -f
 
+# Log deployment timestamp
+echo "$(date)" >> /etc/webhook_timestamp.log
+
 echo -e "${GREEN}✅ Deployment complete!${NC}"
 docker compose ps
 
