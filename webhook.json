@@ -1,0 +1,28 @@
+[
+  {
+    "id": "redeploy-coffee",
+    "execute-command": "/root/coffee/deploy.sh",
+    "command-working-directory": "/root/coffee",
+    "trigger-rule": {
+      "match": {
+        "type": "payload-hmac-sha1",
+        "secret": "CHANGE_ME_TO_A_SECRET_KEY",
+        "parameter": {
+          "name": "X-Hub-Signature"
+        },
+        "source": "header"
+      }
+    }
+  },
+  {
+    "id": "health",
+    "execute-command": "/bin/echo",
+    "pass-arguments-to-command": [
+      {
+        "source": "string",
+        "name": "ok"
+      }
+    ],
+    "response-message": "ok"
+  }
+]
