@@ -106,8 +106,6 @@ export function Header({ onCartClick }: { onCartClick: () => void; }) {
             {session && !isGuest && (
               <NavLink href="/orders" active={pathname === "/orders"} mobile>ORDERS</NavLink>
             )}
-            <NavLink href="/#about" mobile>ABOUT</NavLink>
-            <NavLink href="/#locations" mobile>LOCATIONS</NavLink>
           </nav>
         )}
       </div>

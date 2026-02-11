@@ -95,4 +95,8 @@
   .scanline {
     @apply absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(0,0,0,0.1)_2px,rgba(0,0,0,0.1)_4px)] pointer-events-none;
   }
+  header {
+    padding-top: env(safe-area-inset-top);
+    background-color: var(--background);
+  }
 }
