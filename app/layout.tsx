@@ -13,7 +13,6 @@ const _orbitron = Orbitron({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: 'ORBIT COFFEE - Retro Futuristic Brews',
   description: 'Experience coffee from the future. Premium brews crafted with atomic precision.',
-  generator: 'v0.app',
   manifest: '/manifest.json',
   themeColor: '#FF6B35',
   appleWebApp: {
