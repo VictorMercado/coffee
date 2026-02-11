@@ -13,11 +13,10 @@ services:
       - NEXTAUTH_URL=https://coffee.netarc.app
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
       - AUTH_TRUST_HOST=true
+      - GOOGLE_GENERATIVE_AI_API_KEY=${GOOGLE_GENERATIVE_AI_API_KEY}
     volumes:
-      # Persist SQLite database
+      # Persist SQLite database and uploaded images
       - orbit-data:/app/data
-      # Persist uploaded images if any
-      - orbit-uploads:/app/public/uploads
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
       interval: 30s
@@ -27,6 +26,4 @@ services:
 
 volumes:
   orbit-data:
-    driver: local
-  orbit-uploads:
     driver: local

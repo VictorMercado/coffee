@@ -1,14 +1,14 @@
-import { NextRequest, NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
-import { checkAdminAuth } from "@/lib/auth-helper"
-import { menuItemSchema } from "@/lib/validations"
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { checkAdminAuth } from "@/lib/auth-helper";
+import { menuItemSchema } from "@/lib/validations";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string; }>; }
 ) {
   try {
-    const { id } = await params
+    const { id } = await params;
     const menuItem = await prisma.menuItem.findUnique({
       where: {
         id,
@@ -39,10 +39,10 @@ export async function GET(
           },
         },
       },
-    })
+    });
 
     if (!menuItem) {
-      return NextResponse.json({ error: "Menu item not found" }, { status: 404 })
+      return NextResponse.json({ error: "Menu item not found" }, { status: 404 });
     }
 
     // Transform data
@@ -86,39 +86,39 @@ export async function GET(
         duration: step.duration,
         temperature: step.temperature,
       })),
-    }
+    };
 
-    return NextResponse.json(transformedItem)
+    return NextResponse.json(transformedItem);
   } catch (error) {
-    console.error("Error fetching menu item:", error)
+    console.error("Error fetching menu item:", error);
     return NextResponse.json(
       { error: "Failed to fetch menu item" },
       { status: 500 }
-    )
+    );
   }
 }
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string; }>; }
 ) {
-  const authResult = await checkAdminAuth()
+  const authResult = await checkAdminAuth();
   if (!authResult.authorized) {
-    return NextResponse.json({ error: authResult.error }, { status: 401 })
+    return NextResponse.json({ error: authResult.error }, { status: 401 });
   }
 
   try {
-    const { id } = await params
-    const body = await request.json()
-    const validatedData = menuItemSchema.partial().parse(body)
+    const { id } = await params;
+    const body = await request.json();
+    const validatedData = menuItemSchema.partial().parse(body);
 
     // Delete existing relations
-    await prisma.menuItemSize.deleteMany({ where: { menuItemId: id } })
-    await prisma.menuItemTag.deleteMany({ where: { menuItemId: id } })
+    await prisma.menuItemSize.deleteMany({ where: { menuItemId: id } });
+    await prisma.menuItemTag.deleteMany({ where: { menuItemId: id } });
     await prisma.menuItemIngredient.deleteMany({
       where: { menuItemId: id },
-    })
-    await prisma.recipeStep.deleteMany({ where: { menuItemId: id } })
+    });
+    await prisma.recipeStep.deleteMany({ where: { menuItemId: id } });
 
     // Update menu item with new relations
     const menuItem = await prisma.menuItem.update({
@@ -180,44 +180,42 @@ export async function PATCH(
         sizes: { include: { size: true } },
         tags: { include: { tag: true } },
       },
-    })
+    });
 
-    return NextResponse.json(menuItem)
+    return NextResponse.json(menuItem);
   } catch (error: any) {
-    console.error("Error updating menu item:", error)
+    console.error("Error updating menu item:", error);
     if (error.name === "ZodError") {
-      return NextResponse.json({ error: error.errors }, { status: 400 })
+      return NextResponse.json({ error: error.errors }, { status: 400 });
     }
     return NextResponse.json(
       { error: "Failed to update menu item" },
       { status: 500 }
-    )
+    );
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string; }>; }
 ) {
-  const authResult = await checkAdminAuth()
+  const authResult = await checkAdminAuth();
   if (!authResult.authorized) {
-    return NextResponse.json({ error: authResult.error }, { status: 401 })
+    return NextResponse.json({ error: authResult.error }, { status: 401 });
   }
 
   try {
-    const { id } = await params
-    // Soft delete by setting isActive to false
-    await prisma.menuItem.update({
+    const { id } = await params;
+    await prisma.menuItem.delete({
       where: { id },
-      data: { isActive: false },
-    })
+    });
 
-    return NextResponse.json({ message: "Menu item deleted successfully" })
+    return NextResponse.json({ message: "Menu item deleted successfully" });
   } catch (error) {
-    console.error("Error deleting menu item:", error)
+    console.error("Error deleting menu item:", error);
     return NextResponse.json(
       { error: "Failed to delete menu item" },
       { status: 500 }
-    )
+    );
   }
 }

@@ -18,8 +18,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV DATABASE_URL="file:/tmp/build.db"
 RUN npx prisma migrate deploy && pnpm build
 
-# Create data directory
-RUN mkdir -p /app/data
+# Create data and upload directories
+RUN mkdir -p /app/data /app/data/uploads/menu
 
 ENV NODE_ENV=production
 ENV PORT=3000

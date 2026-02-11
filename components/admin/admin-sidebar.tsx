@@ -19,7 +19,7 @@ export function AdminSidebar() {
   const pathname = usePathname()
 
   return (
-    <div className="flex h-full w-64 flex-col border-r border-border bg-[#1A0F08]">
+    <div className="flex sticky top-0 h-full w-64 flex-col border-r border-border bg-[#1A0F08]">
       <div className="border-b border-border p-6">
         <h1 className="font-mono text-xl font-bold text-primary">
           <Link href="/">ORBIT COFFEE</Link>

@@ -108,7 +108,6 @@ export function MenuContent({ menuItems, categories }: MenuContentProps) {
         </section>
       </main>
 
-      <Footer />
       <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </div>
   )

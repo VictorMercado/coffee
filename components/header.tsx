@@ -1,20 +1,21 @@
-"use client"
+"use client";
 
-import React from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { ShoppingCart, User, Menu, X } from "lucide-react"
-import { useState } from "react"
-import { useSession } from "next-auth/react"
-import { useCart } from "@/lib/cart-store"
-import { Button } from "@/components/ui/button"
+import React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { ShoppingCart, User, Menu, X, Shield } from "lucide-react";
+import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { useCart } from "@/lib/cart-store";
+import { Button } from "@/components/ui/button";
 
-export function Header({ onCartClick }: { onCartClick: () => void }) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const itemCount = useCart((state) => state.itemCount())
-  const pathname = usePathname()
-  const { data: session } = useSession()
-  const isGuest = session?.user?.username === "guest"
+export function Header({ onCartClick }: { onCartClick: () => void; }) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const itemCount = useCart((state) => state.itemCount());
+  const pathname = usePathname();
+  const { data: session } = useSession();
+  const isGuest = session?.user?.username === "guest";
+  const isAdmin = session?.user?.role === "ADMIN";
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
@@ -42,6 +43,18 @@ export function Header({ onCartClick }: { onCartClick: () => void }) {
 
           {/* Actions */}
           <div className="flex items-center gap-2 sm:gap-4">
+            {isAdmin && (
+              <Link href="/admin">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-foreground hover:text-primary hover:bg-muted"
+                >
+                  <Shield className="w-5 h-5" />
+                  <span className="sr-only">Admin Portal</span>
+                </Button>
+              </Link>
+            )}
             <Link href="/account">
               <div className="relative">
                 <Button
@@ -99,7 +112,7 @@ export function Header({ onCartClick }: { onCartClick: () => void }) {
         )}
       </div>
     </header>
-  )
+  );
 }
 
 function NavLink({
@@ -108,10 +121,10 @@ function NavLink({
   active,
   mobile
 }: {
-  href: string
-  children: React.ReactNode
-  active?: boolean
-  mobile?: boolean
+  href: string;
+  children: React.ReactNode;
+  active?: boolean;
+  mobile?: boolean;
 }) {
   return (
     <Link
@@ -124,5 +137,5 @@ function NavLink({
     >
       {children}
     </Link>
-  )
+  );
 }

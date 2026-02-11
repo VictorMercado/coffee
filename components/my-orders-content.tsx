@@ -98,6 +98,16 @@ export function MyOrdersContent({ user }: MyOrdersContentProps) {
     });
   };
 
+  const getReadyByTime = (createdAt: string) => {
+    const orderTime = new Date(createdAt);
+    const prepMinutes = settings?.prepTime ?? 15;
+    const readyTime = new Date(orderTime.getTime() + prepMinutes * 60 * 1000);
+    return readyTime.toLocaleString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  };
+
   const pricingEnabled = settings?.pricingEnabled ?? true;
 
   return (
@@ -171,6 +181,14 @@ export function MyOrdersContent({ user }: MyOrdersContentProps) {
                           <div className="font-mono text-xs text-muted-foreground mt-2">
                             {formatDate(order.createdAt)}
                           </div>
+                          {(order.status === "PENDING" || order.status === "PREPARING") && (
+                            <div className="inline-flex items-center gap-1.5 mt-2 px-2 py-1 border border-primary/30 bg-primary/5">
+                              <Clock className="w-3 h-3 text-primary" />
+                              <span className="font-mono text-xs text-primary tracking-wider">
+                                READY BY {getReadyByTime(order.createdAt)}
+                              </span>
+                            </div>
+                          )}
                         </div>
                         <div className="text-right">
                           {pricingEnabled && (
@@ -284,7 +302,6 @@ export function MyOrdersContent({ user }: MyOrdersContentProps) {
         </div>
       </main>
 
-      <Footer />
       <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </div>
   );
