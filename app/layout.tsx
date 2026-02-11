@@ -14,6 +14,13 @@ export const metadata: Metadata = {
   title: 'ORBIT COFFEE - Retro Futuristic Brews',
   description: 'Experience coffee from the future. Premium brews crafted with atomic precision.',
   generator: 'v0.app',
+  manifest: '/manifest.json',
+  themeColor: '#FF6B35',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Orbit Coffee',
+  },
   icons: {
     icon: [
       {
@@ -31,6 +38,9 @@ export const metadata: Metadata = {
     ],
     apple: '/apple-icon.png',
   },
+  other: {
+    'mobile-web-app-capable': 'yes',
+  },
 };
 
 export default function RootLayout({
@@ -40,6 +50,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+      </head>
       <body className={`font-sans antialiased`}>
         <QueryProvider>
           <AuthProvider>
@@ -49,6 +62,17 @@ export default function RootLayout({
           </AuthProvider>
         </QueryProvider>
         <Analytics />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                  navigator.serviceWorker.register('/sw.js');
+                });
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );
