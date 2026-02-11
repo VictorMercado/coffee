@@ -11,8 +11,16 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-echo -e "${GREEN}🚀 Starting Orbit Coffee deployment...${NC}"
-cd "$(dirname "$0")"
+# 1. Get the absolute path to the directory where this script lives
+PARENT_PATH=$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)
+cd "$PARENT_PATH"
+
+# 2. Export the variables from .env manually just in case
+if [ -f .env ]; then
+    export $(grep -v '^#' .env | xargs)
+fi
+
+echo -e "${GREEN}🚀 Starting Orbit Coffee deployment in $PARENT_PATH...${NC}"
 
 echo -e "${YELLOW}📥 Pulling latest changes...${NC}"
 git pull --rebase origin main
