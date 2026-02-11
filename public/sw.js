@@ -1,4 +1,4 @@
-const CACHE_NAME = "orbit-coffee-v1";
+const CACHE_NAME = "orbit-coffee-v2";
 const STATIC_ASSETS = [
   "/",
   "/menu",
@@ -59,7 +59,9 @@ self.addEventListener("fetch", (event) => {
     caches.match(request).then((cached) => {
       if (cached) return cached;
       return fetch(request).then((response) => {
-        if (response.ok && response.type === "basic") {
+        // Check if the request URL scheme is not 'chrome-extension' before caching
+        const url = new URL(request.url);
+        if (response.ok && response.type === "basic" && url.protocol !== 'chrome-extension:') {
           const clone = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
         }

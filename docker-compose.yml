@@ -1,9 +1,9 @@
 services:
-  orbit-coffee:
+  coffee:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: orbit-coffee
+    container_name: coffee
     restart: unless-stopped
     ports:
       - "3000:3000"
@@ -12,6 +12,7 @@ services:
       - DATABASE_URL=file:/app/data/prod.db
       - NEXTAUTH_URL=https://coffee.netarc.app
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - AUTH_SECRET=${AUTH_SECRET}
       - AUTH_TRUST_HOST=true
       - GOOGLE_GENERATIVE_AI_API_KEY=${GOOGLE_GENERATIVE_AI_API_KEY}
     volumes:

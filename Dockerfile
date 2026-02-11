@@ -27,7 +27,5 @@ ENV HOSTNAME="0.0.0.0"
 
 EXPOSE 3000
 
-COPY docker-entrypoint.sh ./
-RUN chmod +x docker-entrypoint.sh
-
-ENTRYPOINT ["./docker-entrypoint.sh"]
+# Run migrations and start app
+CMD /bin/sh -c "npx prisma migrate deploy && exec pnpm start"

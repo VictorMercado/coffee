@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useCart } from "@/lib/cart-store";
 import { Button } from "@/components/ui/button";
+import Image from "next/image"
 
 export function Header({ onCartClick }: { onCartClick: () => void; }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -23,9 +24,12 @@ export function Header({ onCartClick }: { onCartClick: () => void; }) {
         <div className="flex items-center justify-between h-16 sm:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-primary flex items-center justify-center">
-              <span className="font-mono text-primary text-lg sm:text-xl">◉</span>
-            </div>
+            <Image
+              src="/icon.svg"
+              alt="Orbit Coffee"
+              width={46}
+              height={46}
+            />
             <div>
               <h1 className="font-mono text-primary text-lg sm:text-xl tracking-[0.2em]">ORBIT</h1>
               <p className="text-[10px] sm:text-xs text-muted-foreground tracking-[0.3em]">COFFEE CO.</p>

@@ -1,3 +1,5 @@
+import Image from "next/image"
+
 export function Footer() {
   return (
     <footer className="bg-background border-t border-border">
@@ -6,9 +8,12 @@ export function Footer() {
           {/* Brand */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 border-2 border-primary flex items-center justify-center">
-                <span className="font-mono text-primary text-lg">◉</span>
-              </div>
+            <Image
+              src="/icon.svg"
+              alt="Orbit Coffee"
+              width={46}
+              height={46}
+            />
               <div>
                 <h3 className="font-mono text-primary text-lg tracking-[0.2em]">ORBIT</h3>
                 <p className="text-[10px] text-muted-foreground tracking-[0.3em]">COFFEE CO.</p>
