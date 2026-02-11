@@ -35,7 +35,8 @@ self.addEventListener("fetch", (event) => {
   if (
     request.method !== "GET" ||
     request.url.includes("/api/") ||
-    request.url.includes("/auth/")
+    request.url.includes("/auth/") ||
+    !request.url.startsWith("http")
   ) {
     return;
   }
@@ -58,15 +59,20 @@ self.addEventListener("fetch", (event) => {
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) return cached;
-      return fetch(request).then((response) => {
-        // Check if the request URL scheme is not 'chrome-extension' before caching
-        const url = new URL(request.url);
-        if (response.ok && response.type === "basic" && url.protocol !== 'chrome-extension:') {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-        }
-        return response;
-      });
+      return fetch(request)
+        .then((response) => {
+          // Check if the request URL scheme is not 'chrome-extension' before caching
+          if (response.ok && response.type === "basic") {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          }
+          return response;
+        })
+        .catch((err) => {
+          // Network error and not in cache
+          console.error("SW fetch failed:", err);
+          throw err;
+        });
     })
   );
 });
