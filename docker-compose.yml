@@ -9,7 +9,7 @@ services:
     ports:
       - "3000:3000"
     env_file:
-      - .env
+      - /etc/coffee/.env
     volumes:
       # Persist SQLite database and uploaded images
       - orbit-data:/app/data

@@ -15,19 +15,13 @@ NC='\033[0m'
 PARENT_PATH=$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)
 cd "$PARENT_PATH"
 
-# 2. Generate .env file from OS environment variables
-echo -e "${YELLOW}📝 Writing .env from OS environment...${NC}"
-ENV_FILE="$PARENT_PATH/.env"
-cat > "$ENV_FILE" <<EOF
-NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-}
-AUTH_SECRET=${AUTH_SECRET:-}
-GOOGLE_GENERATIVE_AI_API_KEY=${GOOGLE_GENERATIVE_AI_API_KEY:-}
-NEXTAUTH_URL=${NEXTAUTH_URL:-https://coffee.netarc.app}
-AUTH_TRUST_HOST=true
-DATABASE_URL=file:/app/data/prod.db
-NODE_ENV=production
-EOF
-echo "  → Wrote $ENV_FILE"
+# 2. Verify env file exists at /etc/coffee/.env
+if [ ! -f "/etc/coffee/.env" ]; then
+    echo -e "${YELLOW}⚠️  No .env file found at /etc/coffee/.env${NC}"
+    echo "$(date) - Deployment failed: No .env file found at /etc/coffee/.env" >> /etc/webhook_timestamp.log
+    exit 1
+fi
+echo -e "${GREEN}✅ Env file found at /etc/coffee/.env${NC}"
 
 echo -e "${GREEN}🚀 Starting Orbit Coffee deployment in $PARENT_PATH...${NC}"
 
