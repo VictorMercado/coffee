@@ -1,6 +1,9 @@
 import { auth } from "@/lib/server/auth";
 import { AccountContent } from "@/components/account-content";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function AccountPage() {
   const session = await auth();
 

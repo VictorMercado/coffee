@@ -45,6 +45,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.role = user.role;
         token.username = user.username;
       }
+      // Refresh role from database on each request
+      if (token.sub) {
+        const dbUser = await UserRepo.findUserById(token.sub);
+        if (dbUser) {
+          token.role = dbUser.role;
+          token.username = dbUser.username;
+        }
+      }
       return token;
     },
     async session({ session, token }) {
