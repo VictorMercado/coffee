@@ -10,14 +10,6 @@ services:
       - "3000:3000"
     env_file:
       - .env
-    environment:
-      - NODE_ENV=production
-      - DATABASE_URL=file:/app/data/prod.db
-      - NEXTAUTH_URL=https://coffee.netarc.app
-      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
-      - AUTH_SECRET=${AUTH_SECRET}
-      - AUTH_TRUST_HOST=true
-      - GOOGLE_GENERATIVE_AI_API_KEY=${GOOGLE_GENERATIVE_AI_API_KEY}
     volumes:
       # Persist SQLite database and uploaded images
       - orbit-data:/app/data

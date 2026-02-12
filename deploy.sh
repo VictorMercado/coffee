@@ -1,7 +1,7 @@
 #!/bin/bash
 # Orbit Coffee Deploy Script
 # Usage: ./deploy.sh [--no-cache]
-
+echo "$(date) - Deployment started" >> /etc/webhook_timestamp.log
 set -e
 
 # Ensure we have the full path for binaries (helps with Webhook environments)
@@ -15,10 +15,19 @@ NC='\033[0m'
 PARENT_PATH=$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)
 cd "$PARENT_PATH"
 
-# 2. Export the variables from .env manually just in case
-if [ -f .env ]; then
-    export $(grep -v '^#' .env | xargs)
-fi
+# 2. Generate .env file from OS environment variables
+echo -e "${YELLOW}📝 Writing .env from OS environment...${NC}"
+ENV_FILE="$PARENT_PATH/.env"
+cat > "$ENV_FILE" <<EOF
+NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-}
+AUTH_SECRET=${AUTH_SECRET:-}
+GOOGLE_GENERATIVE_AI_API_KEY=${GOOGLE_GENERATIVE_AI_API_KEY:-}
+NEXTAUTH_URL=${NEXTAUTH_URL:-https://coffee.netarc.app}
+AUTH_TRUST_HOST=true
+DATABASE_URL=file:/app/data/prod.db
+NODE_ENV=production
+EOF
+echo "  → Wrote $ENV_FILE"
 
 echo -e "${GREEN}🚀 Starting Orbit Coffee deployment in $PARENT_PATH...${NC}"
 
@@ -38,7 +47,7 @@ echo -e "${YELLOW}🧹 Cleaning up old images...${NC}"
 docker image prune -f
 
 # Log deployment timestamp
-echo "$(date)" >> /etc/webhook_timestamp.log
+echo "$(date) - Deployment complete" >> /etc/webhook_timestamp.log
 
 echo -e "${GREEN}✅ Deployment complete!${NC}"
 docker compose ps
