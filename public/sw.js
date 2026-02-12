@@ -1,7 +1,5 @@
-const CACHE_NAME = "orbit-coffee-v2";
+const CACHE_NAME = "orbit-coffee-v3";
 const STATIC_ASSETS = [
-  "/",
-  "/menu",
   "/icon-light-32x32.png",
   "/icon-dark-32x32.png",
   "/apple-icon.png",
@@ -41,38 +39,17 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Network-first for navigation (HTML pages)
-  if (request.mode === "navigate") {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
+  // Network-first for everything (pages and assets)
+  // Falls back to cache only when offline
+  event.respondWith(
+    fetch(request)
+      .then((response) => {
+        if (response.ok && response.type === "basic") {
           const clone = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-          return response;
-        })
-        .catch(() => caches.match(request))
-    );
-    return;
-  }
-
-  // Cache-first for static assets
-  event.respondWith(
-    caches.match(request).then((cached) => {
-      if (cached) return cached;
-      return fetch(request)
-        .then((response) => {
-          // Check if the request URL scheme is not 'chrome-extension' before caching
-          if (response.ok && response.type === "basic") {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-          }
-          return response;
-        })
-        .catch((err) => {
-          // Network error and not in cache
-          console.error("SW fetch failed:", err);
-          throw err;
-        });
-    })
+        }
+        return response;
+      })
+      .catch(() => caches.match(request))
   );
 });
