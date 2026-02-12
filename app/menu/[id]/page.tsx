@@ -1,29 +1,11 @@
-import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { DrinkDetail } from "@/components/drink-detail";
+import * as MenuItemRepo from "@/lib/server/repo/menu-item";
 
 export const dynamic = "force-dynamic";
 
 async function getDrink(id: string) {
-  const menuItem = await prisma.menuItem.findUnique({
-    where: { id, isActive: true },
-    include: {
-      category: true,
-      sizes: {
-        include: { size: true },
-      },
-      ingredients: {
-        include: { ingredient: true },
-        orderBy: { sortOrder: "asc" },
-      },
-      tags: {
-        include: { tag: true },
-      },
-      recipeSteps: {
-        orderBy: { stepNumber: "asc" },
-      },
-    },
-  });
+  const menuItem = await MenuItemRepo.findActiveMenuItemById(id);
 
   if (!menuItem) return null;
 

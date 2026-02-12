@@ -19,7 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Eye, Clock, CheckCircle2, XCircle, Package } from "lucide-react";
+import { Eye, Clock, CheckCircle2, XCircle, Package, Pencil } from "lucide-react";
 
 interface OrderItem {
   id: string;
@@ -238,14 +238,24 @@ export function OrdersList({ initialOrders }: OrdersListProps) {
                         <ClientDate date={order.createdAt} />
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <Button
-                          onClick={() => handleViewDetails(order)}
-                          variant="outline"
-                          size="sm"
-                          className="border-primary text-primary hover:bg-primary hover:text-[#1A0F08]"
-                        >
-                          <Eye className="h-3 w-3" />
-                        </Button>
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            onClick={() => handleViewDetails(order)}
+                            variant="outline"
+                            size="sm"
+                            className="border-primary text-primary hover:bg-primary hover:text-[#1A0F08]"
+                          >
+                            <Eye className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            onClick={() => router.push(`/admin/orders/${order.id}/edit`)}
+                            variant="outline"
+                            size="sm"
+                            className="border-primary text-primary hover:bg-primary hover:text-[#1A0F08]"
+                          >
+                            <Pencil className="h-3 w-3" />
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   );

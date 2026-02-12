@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
-import { checkAdminAuth } from "@/lib/auth-helper";
-import { prisma } from "@/lib/prisma";
+import { checkAdminAuth } from "@/lib/server/auth-helper";
+import * as MenuItemRepo from "@/lib/server/repo/menu-item";
 
 const UPLOAD_DIR = join(process.cwd(), "data", "uploads", "menu");
 
@@ -57,10 +57,7 @@ export async function POST(
     const imagePath = `/api/uploads/menu/${filename}`;
 
     // Update database
-    await prisma.menuItem.update({
-      where: { id },
-      data: { imagePath },
-    });
+    await MenuItemRepo.updateMenuItemImage(id, imagePath);
 
     return NextResponse.json({ imagePath });
   } catch (error) {

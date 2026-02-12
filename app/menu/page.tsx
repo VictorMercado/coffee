@@ -1,40 +1,14 @@
-import { prisma } from "@/lib/prisma";
 import { MenuContent } from "@/components/menu-content";
 import { MenuItem } from "@/lib/client/api/menu-items";
+import * as MenuItemRepo from "@/lib/server/repo/menu-item";
+import * as CategoryRepo from "@/lib/server/repo/category";
 
 export const dynamic = "force-dynamic";
 
 async function getMenuData() {
   const [menuItems, categories] = await Promise.all([
-    prisma.menuItem.findMany({
-      where: {
-        isActive: true,
-      },
-      include: {
-        category: true,
-        sizes: {
-          include: {
-            size: true,
-          },
-        },
-        tags: {
-          include: {
-            tag: true,
-          },
-        },
-      },
-      orderBy: {
-        sortOrder: "asc",
-      },
-    }),
-    prisma.category.findMany({
-      where: {
-        isActive: true,
-      },
-      orderBy: {
-        sortOrder: "asc",
-      },
-    }),
+    MenuItemRepo.findAllMenuItems(),
+    CategoryRepo.findActiveCategories(),
   ]);
 
   return {

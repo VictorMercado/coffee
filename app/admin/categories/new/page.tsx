@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { AdminHeader } from "@/components/admin/admin-header"
-import { CategoryForm } from "@/components/admin/category-form"
+import { AdminHeader } from "@/components/admin/admin-header";
+import { CategoryForm } from "@/components/admin/forms/category-form";
 
 export default function NewCategoryPage() {
   return (
@@ -14,5 +14,5 @@ export default function NewCategoryPage() {
         <CategoryForm />
       </div>
     </>
-  )
+  );
 }

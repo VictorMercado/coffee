@@ -1,47 +1,22 @@
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
 import { AdminHeader } from "@/components/admin/admin-header";
-import { MenuItemForm } from "@/components/admin/menu-item-form";
+import { MenuItemForm } from "@/components/admin/forms/menu-item-form";
+import * as MenuItemRepo from "@/lib/server/repo/menu-item";
+import * as CategoryRepo from "@/lib/server/repo/category";
+import * as SizeRepo from "@/lib/server/repo/size";
+import * as TagRepo from "@/lib/server/repo/tag";
+import * as IngredientRepo from "@/lib/server/repo/ingredient";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 async function getMenuItemData(id: string) {
   const [menuItem, categories, sizes, tags, ingredients] = await Promise.all([
-    prisma.menuItem.findUnique({
-      where: { id },
-      include: {
-        category: true,
-        sizes: {
-          include: { size: true },
-        },
-        tags: {
-          include: { tag: true },
-        },
-        ingredients: {
-          include: { ingredient: true },
-          orderBy: { sortOrder: "asc" },
-        },
-        recipeSteps: {
-          orderBy: { stepNumber: "asc" },
-        },
-      },
-    }),
-    prisma.category.findMany({
-      where: { isActive: true },
-      orderBy: { sortOrder: "asc" },
-    }),
-    prisma.size.findMany({
-      where: { isActive: true },
-      orderBy: { sortOrder: "asc" },
-    }),
-    prisma.tag.findMany({
-      orderBy: { name: "asc" },
-    }),
-    prisma.ingredient.findMany({
-      where: { isActive: true },
-      orderBy: { name: "asc" },
-    }),
+    MenuItemRepo.findMenuItemById(id),
+    CategoryRepo.findActiveCategories(),
+    SizeRepo.findActiveSizes(),
+    TagRepo.findAllTags(),
+    IngredientRepo.findActiveIngredients(),
   ]);
 
   if (!menuItem) {

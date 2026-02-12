@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { X, Minus, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/lib/cart-store";
+import { useCart } from "@/lib/client/cart-store";
 import { useSettings } from "@/lib/settings-store";
 
 export function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClose: () => void; }) {

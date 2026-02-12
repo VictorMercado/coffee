@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { checkAdminAuth } from "@/lib/auth-helper";
+import { checkAdminAuth } from "@/lib/server/auth-helper";
 import { menuItemSchema } from "@/lib/validations";
+import * as MenuItemRepo from "@/lib/server/repo/menu-item";
 
 export async function GET(
   request: NextRequest,
@@ -9,37 +9,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const menuItem = await prisma.menuItem.findUnique({
-      where: {
-        id,
-      },
-      include: {
-        category: true,
-        sizes: {
-          include: {
-            size: true,
-          },
-        },
-        tags: {
-          include: {
-            tag: true,
-          },
-        },
-        ingredients: {
-          include: {
-            ingredient: true,
-          },
-          orderBy: {
-            sortOrder: "asc",
-          },
-        },
-        recipeSteps: {
-          orderBy: {
-            stepNumber: "asc",
-          },
-        },
-      },
-    });
+    const menuItem = await MenuItemRepo.findMenuItemById(id);
 
     if (!menuItem) {
       return NextResponse.json({ error: "Menu item not found" }, { status: 404 });
@@ -112,75 +82,7 @@ export async function PATCH(
     const body = await request.json();
     const validatedData = menuItemSchema.partial().parse(body);
 
-    // Delete existing relations
-    await prisma.menuItemSize.deleteMany({ where: { menuItemId: id } });
-    await prisma.menuItemTag.deleteMany({ where: { menuItemId: id } });
-    await prisma.menuItemIngredient.deleteMany({
-      where: { menuItemId: id },
-    });
-    await prisma.recipeStep.deleteMany({ where: { menuItemId: id } });
-
-    // Update menu item with new relations
-    const menuItem = await prisma.menuItem.update({
-      where: { id },
-      data: {
-        ...(validatedData.name && { name: validatedData.name }),
-        ...(validatedData.description && {
-          description: validatedData.description,
-        }),
-        ...(validatedData.basePrice !== undefined && {
-          basePrice: validatedData.basePrice,
-        }),
-        ...(validatedData.categoryId && { categoryId: validatedData.categoryId }),
-        ...(validatedData.imagePath !== undefined && {
-          imagePath: validatedData.imagePath,
-        }),
-        ...(validatedData.isActive !== undefined && {
-          isActive: validatedData.isActive,
-        }),
-        ...(validatedData.isFeatured !== undefined && {
-          isFeatured: validatedData.isFeatured,
-        }),
-        ...(validatedData.sortOrder !== undefined && {
-          sortOrder: validatedData.sortOrder,
-        }),
-        ...(validatedData.sizeIds && {
-          sizes: {
-            create: validatedData.sizeIds.map((sizeId) => ({ sizeId })),
-          },
-        }),
-        ...(validatedData.tagIds && {
-          tags: {
-            create: validatedData.tagIds.map((tagId) => ({ tagId })),
-          },
-        }),
-        ...(validatedData.ingredients && {
-          ingredients: {
-            create: validatedData.ingredients.map((ing) => ({
-              ingredientId: ing.ingredientId,
-              quantity: ing.quantity,
-              isOptional: ing.isOptional,
-              sortOrder: ing.sortOrder,
-            })),
-          },
-        }),
-        ...(validatedData.recipeSteps && {
-          recipeSteps: {
-            create: validatedData.recipeSteps.map((step) => ({
-              stepNumber: step.stepNumber,
-              instruction: step.instruction,
-              duration: step.duration,
-              temperature: step.temperature,
-            })),
-          },
-        }),
-      },
-      include: {
-        category: true,
-        sizes: { include: { size: true } },
-        tags: { include: { tag: true } },
-      },
-    });
+    const menuItem = await MenuItemRepo.updateMenuItem(id, validatedData);
 
     return NextResponse.json(menuItem);
   } catch (error: any) {
@@ -206,9 +108,7 @@ export async function DELETE(
 
   try {
     const { id } = await params;
-    await prisma.menuItem.delete({
-      where: { id },
-    });
+    await MenuItemRepo.deleteMenuItem(id);
 
     return NextResponse.json({ message: "Menu item deleted successfully" });
   } catch (error) {

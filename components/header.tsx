@@ -6,9 +6,9 @@ import { usePathname } from "next/navigation";
 import { ShoppingCart, User, Menu, X, Shield } from "lucide-react";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { useCart } from "@/lib/cart-store";
+import { useCart } from "@/lib/client/cart-store";
 import { Button } from "@/components/ui/button";
-import Image from "next/image"
+import Image from "next/image";
 
 export function Header({ onCartClick }: { onCartClick: () => void; }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -19,7 +19,7 @@ export function Header({ onCartClick }: { onCartClick: () => void; }) {
   const isAdmin = session?.user?.role === "ADMIN";
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
           {/* Logo */}
@@ -40,7 +40,7 @@ export function Header({ onCartClick }: { onCartClick: () => void; }) {
           <nav className="hidden md:flex items-center gap-8">
             <NavLink href="/" active={pathname === "/"}>HOME</NavLink>
             <NavLink href="/menu" active={pathname === "/menu"}>MENU</NavLink>
-            {session && !isGuest && (
+            {session && (
               <NavLink href="/orders" active={pathname === "/orders"}>ORDERS</NavLink>
             )}
           </nav>

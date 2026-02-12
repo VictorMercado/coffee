@@ -1,30 +1,12 @@
-import { prisma } from "@/lib/prisma";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { TagsList } from "@/components/admin/tags-list";
+import * as TagRepo from "@/lib/server/repo/tag";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-async function getTags() {
-  const tags = await prisma.tag.findMany({
-    orderBy: { name: "asc" },
-    include: {
-      _count: {
-        select: { menuItems: true },
-      },
-    },
-  });
-
-  return tags.map((tag) => ({
-    id: tag.id,
-    name: tag.name,
-    slug: tag.slug,
-    menuItemCount: tag._count.menuItems,
-  }));
-}
-
 export default async function TagsPage() {
-  const tags = await getTags();
+  const tags = await TagRepo.findAllTagsWithCounts();
 
   return (
     <>

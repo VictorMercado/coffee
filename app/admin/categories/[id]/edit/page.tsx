@@ -1,20 +1,13 @@
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
 import { AdminHeader } from "@/components/admin/admin-header";
-import { CategoryForm } from "@/components/admin/category-form";
+import { CategoryForm } from "@/components/admin/forms/category-form";
+import * as CategoryRepo from "@/lib/server/repo/category";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 async function getCategory(id: string) {
-  const category = await prisma.category.findUnique({
-    where: { id },
-    include: {
-      _count: {
-        select: { menuItems: true },
-      },
-    },
-  });
+  const category = await CategoryRepo.findCategoryById(id);
 
   if (!category) {
     return null;

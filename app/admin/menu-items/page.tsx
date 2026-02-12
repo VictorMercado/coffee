@@ -1,19 +1,12 @@
-import { prisma } from "@/lib/prisma";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { MenuItemsList } from "@/components/admin/menu-items-list";
+import * as MenuItemRepo from "@/lib/server/repo/menu-item";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 async function getMenuItems() {
-  const menuItems = await prisma.menuItem.findMany({
-    include: {
-      category: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+  const menuItems = await MenuItemRepo.findAllMenuItems({ includeInactive: true });
 
   return menuItems.map((item) => ({
     id: item.id,

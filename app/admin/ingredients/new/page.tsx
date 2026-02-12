@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { AdminHeader } from "@/components/admin/admin-header"
-import { IngredientForm } from "@/components/admin/ingredient-form"
+import { AdminHeader } from "@/components/admin/admin-header";
+import { IngredientForm } from "@/components/admin/forms/ingredient-form";
 
 export default function NewIngredientPage() {
   return (
@@ -14,5 +14,5 @@ export default function NewIngredientPage() {
         <IngredientForm />
       </div>
     </>
-  )
+  );
 }

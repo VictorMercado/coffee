@@ -9,7 +9,7 @@ import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useCart } from "@/lib/cart-store";
+import { useCart } from "@/lib/client/cart-store";
 import { useSettings } from "@/lib/settings-store";
 import { createOrder } from "@/lib/client/api";
 import { ArrowLeft, Loader2 } from "lucide-react";
@@ -33,7 +33,7 @@ export function CheckoutContent({ user }: CheckoutContentProps) {
   const [error, setError] = useState("");
 
   const [formData, setFormData] = useState({
-    name: user.username !== "guest" ? user.username : "",
+    name: user.username === "guest" ? "guest" : user.username,
     email: user.email ?? "",
   });
 
@@ -48,12 +48,12 @@ export function CheckoutContent({ user }: CheckoutContentProps) {
     },
   });
 
-  // Redirect if cart is empty
-  useEffect(() => {
-    if (items.length === 0 && !mutation.isPending) {
-      router.push("/menu");
-    }
-  }, [items, router, mutation.isPending]);
+  // // Redirect if cart is empty
+  // useEffect(() => {
+  //   if (items.length === 0 && !mutation.isPending) {
+  //     router.push("/menu");
+  //   }
+  // }, [items, router, mutation.isPending]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

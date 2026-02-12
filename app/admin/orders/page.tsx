@@ -1,17 +1,12 @@
-import { prisma } from "@/lib/prisma";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { OrdersList } from "@/components/admin/orders-list";
+import * as OrderRepo from "@/lib/server/repo/order";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 async function getOrders() {
-  const orders = await prisma.order.findMany({
-    orderBy: { createdAt: "desc" },
-    include: {
-      items: true,
-    },
-  });
+  const orders = await OrderRepo.findAllOrders();
 
   return orders.map((order) => ({
     id: order.id,

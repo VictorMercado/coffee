@@ -1,16 +1,11 @@
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
 import { OrderConfirmationContent } from "@/components/order-confirmation-content";
+import * as OrderRepo from "@/lib/server/repo/order";
 
 export const dynamic = "force-dynamic";
 
 async function getOrder(id: string) {
-  const order = await prisma.order.findUnique({
-    where: { id },
-    include: {
-      items: true,
-    },
-  });
+  const order = await OrderRepo.findOrderById(id);
 
   if (!order) {
     return null;

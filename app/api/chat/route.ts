@@ -1,8 +1,12 @@
 import { google } from "@ai-sdk/google";
 import { streamText, convertToModelMessages, stepCountIs } from "ai";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import * as MenuItemRepo from "@/lib/server/repo/menu-item";
+import * as IngredientRepo from "@/lib/server/repo/ingredient";
+import * as CategoryRepo from "@/lib/server/repo/category";
+import * as SizeRepo from "@/lib/server/repo/size";
+import * as RecipeStepRepo from "@/lib/server/repo/recipe-step";
 
 export async function POST(req: Request) {
   const { messages } = await req.json();
@@ -32,10 +36,7 @@ export async function POST(req: Request) {
           "Get all current menu items. ALWAYS call this first before creating a new drink to check what already exists and avoid duplicates.",
         inputSchema: z.object({}),
         execute: async () => {
-          const items = await prisma.menuItem.findMany({
-            include: { category: true },
-            orderBy: { name: "asc" },
-          });
+          const items = await MenuItemRepo.findAllMenuItems({ includeInactive: true });
           return items.map((i) => ({
             id: i.id,
             name: i.name,
@@ -51,10 +52,7 @@ export async function POST(req: Request) {
           "Get all available ingredients in the shop. Use this to see what ingredients are available before suggesting recipes.",
         inputSchema: z.object({}),
         execute: async () => {
-          const ingredients = await prisma.ingredient.findMany({
-            where: { isActive: true },
-            orderBy: { name: "asc" },
-          });
+          const ingredients = await IngredientRepo.findActiveIngredients();
           return ingredients.map((i) => ({
             id: i.id,
             name: i.name,
@@ -78,18 +76,14 @@ export async function POST(req: Request) {
             .describe("Comma-separated allergen info, e.g. 'dairy, nuts'"),
         }),
         execute: async ({ name, description, allergens }: { name: string; description?: string; allergens?: string; }) => {
-          const existing = await prisma.ingredient.findUnique({
-            where: { name },
-          });
+          const existing = await IngredientRepo.findIngredientByName(name);
           if (existing) {
             return {
               success: false,
               message: `Ingredient "${name}" already exists.`,
             };
           }
-          const ingredient = await prisma.ingredient.create({
-            data: { name, description, allergens },
-          });
+          const ingredient = await IngredientRepo.createIngredient({ name, description, allergens });
           return {
             success: true,
             message: `Added "${name}" to ingredients.`,
@@ -102,10 +96,7 @@ export async function POST(req: Request) {
           "Get all available menu categories. Use this before creating a menu item to find the correct categoryId.",
         inputSchema: z.object({}),
         execute: async () => {
-          const categories = await prisma.category.findMany({
-            where: { isActive: true },
-            orderBy: { sortOrder: "asc" },
-          });
+          const categories = await CategoryRepo.findActiveCategories();
           return categories.map((c) => ({
             id: c.id,
             name: c.name,
@@ -148,36 +139,20 @@ export async function POST(req: Request) {
           ingredients: { ingredientId: string; quantity?: string; isOptional?: boolean; }[];
         }) => {
           try {
-            const sizes = await prisma.size.findMany({
-              where: { isActive: true },
-              orderBy: { sortOrder: "asc" },
-            });
-            const menuItem = await prisma.menuItem.create({
-              data: {
-                name,
-                description,
-                basePrice,
-                categoryId,
-                isFeatured: isFeatured ?? false,
-                ingredients: {
-                  create: ingredients.map((ing, idx) => ({
-                    ingredientId: ing.ingredientId,
-                    quantity: ing.quantity,
-                    isOptional: ing.isOptional ?? false,
-                    sortOrder: idx,
-                  })),
-                },
-              },
-              include: {
-                category: true,
-                ingredients: { include: { ingredient: true } },
-              },
-            });
-            await prisma.menuItemSize.create({
-              data: {
-                menuItemId: menuItem.id,
-                sizeId: sizes[0].id,
-              },
+            const sizes = await SizeRepo.findActiveSizes();
+            const menuItem = await MenuItemRepo.createMenuItem({
+              name,
+              description,
+              basePrice,
+              categoryId,
+              isFeatured: isFeatured ?? false,
+              sizeIds: sizes.length > 0 ? [sizes[0].id] : [],
+              ingredients: ingredients.map((ing, idx) => ({
+                ingredientId: ing.ingredientId,
+                quantity: ing.quantity,
+                isOptional: ing.isOptional ?? false,
+                sortOrder: idx,
+              })),
             });
             revalidatePath("/admin/menu-items");
             revalidatePath("/menu");
@@ -185,7 +160,7 @@ export async function POST(req: Request) {
               success: true,
               message: `Created menu item "${menuItem.name}" in ${menuItem.category.name} at $${menuItem.basePrice}`,
               menuItemId: menuItem.id,
-              ingredientCount: menuItem.ingredients.length,
+              ingredientCount: menuItem.ingredients?.length || 0,
             };
           } catch (error: unknown) {
             const message = error instanceof Error ? error.message : "Unknown error";
@@ -221,16 +196,16 @@ export async function POST(req: Request) {
         }) => {
           try {
             // Delete existing steps and create new ones
-            await prisma.recipeStep.deleteMany({ where: { menuItemId } });
-            await prisma.recipeStep.createMany({
-              data: steps.map((s) => ({
+            await RecipeStepRepo.deleteByMenuItemId(menuItemId);
+            await RecipeStepRepo.createMany(
+              steps.map((s) => ({
                 menuItemId,
                 stepNumber: s.stepNumber,
                 instruction: s.instruction,
                 duration: s.duration,
                 temperature: s.temperature,
-              })),
-            });
+              }))
+            );
             revalidatePath("/admin/menu-items");
             revalidatePath("/menu");
             return {

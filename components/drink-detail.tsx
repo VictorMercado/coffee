@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { CartDrawer } from "@/components/cart-drawer";
-import { useCart } from "@/lib/cart-store";
+import { useCart } from "@/lib/client/cart-store";
 import { useSettings } from "@/lib/settings-store";
 import { useSession } from "next-auth/react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";

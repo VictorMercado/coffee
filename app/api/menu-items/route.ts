@@ -1,38 +1,20 @@
-import { NextRequest, NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
-import { checkAdminAuth } from "@/lib/auth-helper"
-import { menuItemSchema } from "@/lib/validations"
+import { NextRequest, NextResponse } from "next/server";
+import { checkAdminAuth } from "@/lib/server/auth-helper";
+import { menuItemSchema } from "@/lib/validations";
+import * as MenuItemRepo from "@/lib/server/repo/menu-item";
 
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams
-    const category = searchParams.get("category")
-    const featured = searchParams.get("featured")
-    const includeInactive = searchParams.get("admin") === "true"
+    const searchParams = request.nextUrl.searchParams;
+    const category = searchParams.get("category");
+    const featured = searchParams.get("featured");
+    const includeInactive = searchParams.get("admin") === "true";
 
-    const menuItems = await prisma.menuItem.findMany({
-      where: {
-        ...(includeInactive ? {} : { isActive: true }),
-        ...(category && { category: { slug: category } }),
-        ...(featured === "true" && { isFeatured: true }),
-      },
-      include: {
-        category: true,
-        sizes: {
-          include: {
-            size: true,
-          },
-        },
-        tags: {
-          include: {
-            tag: true,
-          },
-        },
-      },
-      orderBy: {
-        sortOrder: "asc",
-      },
-    })
+    const menuItems = await MenuItemRepo.findAllMenuItems({
+      category: category || undefined,
+      featured: featured === "true" || undefined,
+      includeInactive,
+    });
 
     // Transform data to match frontend expectations
     const transformedItems = menuItems.map((item) => ({
@@ -51,81 +33,39 @@ export async function GET(request: NextRequest) {
         priceModifier: s.size.priceModifier,
       })),
       tags: item.tags.map((t) => t.tag.name),
-    }))
+    }));
 
-    return NextResponse.json(transformedItems)
+    return NextResponse.json(transformedItems);
   } catch (error) {
-    console.error("Error fetching menu items:", error)
+    console.error("Error fetching menu items:", error);
     return NextResponse.json(
       { error: "Failed to fetch menu items" },
       { status: 500 }
-    )
+    );
   }
 }
 
 export async function POST(request: NextRequest) {
-  const authResult = await checkAdminAuth()
+  const authResult = await checkAdminAuth();
   if (!authResult.authorized) {
-    return NextResponse.json({ error: authResult.error }, { status: 401 })
+    return NextResponse.json({ error: authResult.error }, { status: 401 });
   }
 
   try {
-    const body = await request.json()
-    const validatedData = menuItemSchema.parse(body)
+    const body = await request.json();
+    const validatedData = menuItemSchema.parse(body);
 
-    const menuItem = await prisma.menuItem.create({
-      data: {
-        name: validatedData.name,
-        description: validatedData.description,
-        basePrice: validatedData.basePrice,
-        categoryId: validatedData.categoryId,
-        imagePath: validatedData.imagePath,
-        isActive: validatedData.isActive,
-        isFeatured: validatedData.isFeatured,
-        sortOrder: validatedData.sortOrder,
-        sizes: {
-          create: validatedData.sizeIds.map((sizeId) => ({
-            sizeId,
-          })),
-        },
-        tags: {
-          create: validatedData.tagIds.map((tagId) => ({
-            tagId,
-          })),
-        },
-        ingredients: {
-          create: validatedData.ingredients.map((ing) => ({
-            ingredientId: ing.ingredientId,
-            quantity: ing.quantity,
-            isOptional: ing.isOptional,
-            sortOrder: ing.sortOrder,
-          })),
-        },
-        recipeSteps: {
-          create: validatedData.recipeSteps.map((step) => ({
-            stepNumber: step.stepNumber,
-            instruction: step.instruction,
-            duration: step.duration,
-            temperature: step.temperature,
-          })),
-        },
-      },
-      include: {
-        category: true,
-        sizes: { include: { size: true } },
-        tags: { include: { tag: true } },
-      },
-    })
+    const menuItem = await MenuItemRepo.createMenuItem(validatedData);
 
-    return NextResponse.json(menuItem, { status: 201 })
+    return NextResponse.json(menuItem, { status: 201 });
   } catch (error: any) {
-    console.error("Error creating menu item:", error)
+    console.error("Error creating menu item:", error);
     if (error.name === "ZodError") {
-      return NextResponse.json({ error: error.errors }, { status: 400 })
+      return NextResponse.json({ error: error.errors }, { status: 400 });
     }
     return NextResponse.json(
       { error: "Failed to create menu item" },
       { status: 500 }
-    )
+    );
   }
 }

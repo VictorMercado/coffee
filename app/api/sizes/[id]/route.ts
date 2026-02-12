@@ -1,40 +1,59 @@
-import { NextRequest, NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
-import { auth } from "@/lib/auth"
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/server/auth";
+import { sizeSchema } from "@/lib/validations";
+import * as SizeRepo from "@/lib/server/repo/size";
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string; }>; }
+) {
+  try {
+    const { id } = await params;
+    const size = await SizeRepo.findSizeById(id);
+
+    if (!size) {
+      return NextResponse.json(
+        { error: "Size not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(size);
+  } catch (error) {
+    console.error("Error fetching size:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch size" },
+      { status: 500 }
+    );
+  }
+}
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string; }>; }
 ) {
   try {
-    const session = await auth()
-    const { id } = await params
+    const session = await auth();
+    const { id } = await params;
 
     if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json()
-    const { isActive } = body
+    const body = await request.json();
+    const validatedData = sizeSchema.partial().parse(body);
 
-    if (typeof isActive !== "boolean") {
-      return NextResponse.json(
-        { error: "isActive must be a boolean" },
-        { status: 400 }
-      )
+    const size = await SizeRepo.updateSize(id, validatedData);
+
+    return NextResponse.json(size);
+  } catch (error: any) {
+    console.error("Error updating size:", error);
+    if (error.name === "ZodError") {
+      return NextResponse.json({ error: error.errors }, { status: 400 });
     }
-
-    const size = await prisma.size.update({
-      where: { id },
-      data: { isActive },
-    })
-
-    return NextResponse.json(size)
-  } catch (error) {
-    console.error("Error updating size:", error)
     return NextResponse.json(
       { error: "Failed to update size" },
       { status: 500 }
-    )
+    );
   }
 }

@@ -1,20 +1,20 @@
-"use client"
+"use client";
 
-import { useParams } from "next/navigation"
-import { useQuery } from "@tanstack/react-query"
-import { AdminHeader } from "@/components/admin/admin-header"
-import { IngredientForm } from "@/components/admin/ingredient-form"
-import { fetchIngredient } from "@/lib/client/api"
+import { useParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { AdminHeader } from "@/components/admin/admin-header";
+import { IngredientForm } from "@/components/admin/forms/ingredient-form";
+import { fetchIngredient } from "@/lib/client/api";
 
 export default function EditIngredientPage() {
-  const params = useParams()
-  const ingredientId = params.id as string
+  const params = useParams();
+  const ingredientId = params.id as string;
 
   const { data: ingredient, isLoading, isError } = useQuery({
     queryKey: ["ingredient", ingredientId],
     queryFn: () => fetchIngredient(ingredientId),
     enabled: !!ingredientId,
-  })
+  });
 
   if (isLoading) {
     return (
@@ -24,7 +24,7 @@ export default function EditIngredientPage() {
           <div className="font-mono text-primary">LOADING...</div>
         </div>
       </>
-    )
+    );
   }
 
   if (isError || !ingredient) {
@@ -35,7 +35,7 @@ export default function EditIngredientPage() {
           <div className="font-mono text-red-500">INGREDIENT NOT FOUND</div>
         </div>
       </>
-    )
+    );
   }
 
   return (
@@ -51,5 +51,5 @@ export default function EditIngredientPage() {
         />
       </div>
     </>
-  )
+  );
 }

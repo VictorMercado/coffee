@@ -1,35 +1,36 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { AdminHeader } from "@/components/admin/admin-header"
-import { Switch } from "@/components/ui/switch"
-import { updateSizeStatus } from "@/lib/client/api"
-import { Loader2 } from "lucide-react"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { AdminHeader } from "@/components/admin/admin-header";
+import { Switch } from "@/components/ui/switch";
+import { updateSizeStatus } from "@/lib/client/api";
+import { Loader2, Pencil, Plus } from "lucide-react";
+import { Button } from "../ui/button";
 
 interface Size {
-  id: string
-  name: string
-  abbreviation: string
-  priceModifier: number
-  isActive: boolean
-  sortOrder: number
-  menuItemCount: number
+  id: string;
+  name: string;
+  abbreviation: string;
+  priceModifier: number;
+  isActive: boolean;
+  sortOrder: number;
+  menuItemCount: number;
 }
 
 interface SizesListProps {
-  sizes: Size[]
+  sizes: Size[];
 }
 
 export function SizesList({ sizes: initialSizes }: SizesListProps) {
-  const router = useRouter()
-  const queryClient = useQueryClient()
-  const [sizes, setSizes] = useState(initialSizes)
-  const [error, setError] = useState("")
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const [sizes, setSizes] = useState(initialSizes);
+  const [error, setError] = useState("");
 
   const mutation = useMutation({
-    mutationFn: ({ sizeId, isActive }: { sizeId: string; isActive: boolean }) =>
+    mutationFn: ({ sizeId, isActive }: { sizeId: string; isActive: boolean; }) =>
       updateSizeStatus(sizeId, isActive),
     onMutate: async ({ sizeId, isActive }) => {
       // Optimistic update
@@ -37,11 +38,11 @@ export function SizesList({ sizes: initialSizes }: SizesListProps) {
         prev.map((size) =>
           size.id === sizeId ? { ...size, isActive } : size
         )
-      )
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["sizes"] })
-      router.refresh()
+      queryClient.invalidateQueries({ queryKey: ["sizes"] });
+      router.refresh();
     },
     onError: (error: Error, variables) => {
       // Revert optimistic update on error
@@ -49,15 +50,15 @@ export function SizesList({ sizes: initialSizes }: SizesListProps) {
         prev.map((size) =>
           size.id === variables.sizeId ? { ...size, isActive: !variables.isActive } : size
         )
-      )
-      setError(error.message || "Failed to update size")
+      );
+      setError(error.message || "Failed to update size");
     },
-  })
+  });
 
   const handleToggle = (sizeId: string, currentValue: boolean) => {
-    setError("")
-    mutation.mutate({ sizeId, isActive: !currentValue })
-  }
+    setError("");
+    mutation.mutate({ sizeId, isActive: !currentValue });
+  };
 
   return (
     <>
@@ -66,6 +67,15 @@ export function SizesList({ sizes: initialSizes }: SizesListProps) {
         description="Manage available sizes for menu items"
       />
       <div className="p-8 space-y-6">
+        <div className="mb-6 flex items-center justify-end">
+          <Button
+            onClick={() => router.push("/admin/sizes/new")}
+            className="bg-primary font-mono text-background hover:bg-primary/80"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            NEW SIZE
+          </Button>
+        </div>
         {error && (
           <div className="border border-red-500 bg-red-900/20 p-4">
             <p className="font-mono text-sm text-red-400">{error}</p>
@@ -90,6 +100,9 @@ export function SizesList({ sizes: initialSizes }: SizesListProps) {
                 </th>
                 <th className="px-6 py-4 text-center font-mono text-xs text-primary tracking-wider">
                   ACTIVE
+                </th>
+                <th className="px-6 py-4 text-center font-mono text-xs text-primary tracking-wider">
+                  ACTIONS
                 </th>
               </tr>
             </thead>
@@ -128,6 +141,18 @@ export function SizesList({ sizes: initialSizes }: SizesListProps) {
                       />
                     </div>
                   </td>
+                  <td className="px-6 py-4">
+                    <div className="flex justify-center items-center">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => router.push(`/admin/sizes/${size.id}/edit`)}
+                        className="border-primary text-primary hover:bg-primary hover:text-[#1A0F08]"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -141,5 +166,5 @@ export function SizesList({ sizes: initialSizes }: SizesListProps) {
         </div>
       </div>
     </>
-  )
+  );
 }

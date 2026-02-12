@@ -1,33 +1,11 @@
-import { prisma } from "@/lib/prisma";
 import { HomeContent } from "@/components/home-content";
 import { MenuItem } from "@/lib/client/api/menu-items";
+import * as MenuItemRepo from "@/lib/server/repo/menu-item";
 
 export const dynamic = "force-dynamic";
 
 async function getFeaturedItems(): Promise<MenuItem[]> {
-  const menuItems = await prisma.menuItem.findMany({
-    where: {
-      isActive: true,
-      isFeatured: true,
-    },
-    include: {
-      category: true,
-      sizes: {
-        include: {
-          size: true,
-        },
-      },
-      tags: {
-        include: {
-          tag: true,
-        },
-      },
-    },
-    orderBy: {
-      sortOrder: "asc",
-    },
-    take: 4, // Show max 4 featured items
-  });
+  const menuItems = await MenuItemRepo.findFeaturedMenuItems(4);
 
   // Transform to match MenuItem interface
   return menuItems.map((item) => ({

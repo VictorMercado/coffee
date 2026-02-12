@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Coffee, Star, Eye, EyeOff } from "lucide-react";
+import * as MenuItemRepo from "@/lib/server/repo/menu-item";
+import * as CategoryRepo from "@/lib/server/repo/category";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -15,36 +16,15 @@ async function getDashboardData() {
     featuredItems,
     categories,
     recentItems,
-    itemsByCategory,
+    categoryBreakdown,
   ] = await Promise.all([
-    prisma.menuItem.count(),
-    prisma.menuItem.count({ where: { isActive: true } }),
-    prisma.menuItem.count({ where: { isActive: false } }),
-    prisma.menuItem.count({ where: { isFeatured: true, isActive: true } }),
-    prisma.category.findMany({
-      where: { isActive: true },
-      include: {
-        _count: {
-          select: { menuItems: true },
-        },
-      },
-      orderBy: { sortOrder: "asc" },
-    }),
-    prisma.menuItem.findMany({
-      take: 5,
-      orderBy: { createdAt: "desc" },
-      include: {
-        category: true,
-      },
-    }),
-    prisma.category.findMany({
-      where: { isActive: true },
-      include: {
-        menuItems: {
-          where: { isActive: true },
-        },
-      },
-    }),
+    MenuItemRepo.countMenuItems(),
+    MenuItemRepo.countMenuItems({ isActive: true }),
+    MenuItemRepo.countMenuItems({ isActive: false }),
+    MenuItemRepo.countMenuItems({ isFeatured: true, isActive: true }),
+    CategoryRepo.findCategoriesWithCounts(),
+    MenuItemRepo.findRecentMenuItems(5),
+    CategoryRepo.findCategoriesBreakdown(),
   ]);
 
   return {
@@ -59,7 +39,7 @@ async function getDashboardData() {
       name: c.name,
       slug: c.slug,
       icon: c.icon,
-      itemCount: c._count.menuItems,
+      itemCount: c.menuItemCount,
     })),
     recentItems: recentItems.map((item) => ({
       id: item.id,
@@ -70,10 +50,7 @@ async function getDashboardData() {
       isFeatured: item.isFeatured,
       createdAt: item.createdAt,
     })),
-    categoryBreakdown: itemsByCategory.map((c) => ({
-      name: c.name,
-      count: c.menuItems.length,
-    })),
+    categoryBreakdown,
   };
 }
 
@@ -239,8 +216,8 @@ export default async function AdminDashboard() {
                     <div className="flex items-center gap-3 flex-wrap">
                       <span
                         className={`px-2 py-0.5 font-mono text-xs ${item.isActive
-                            ? "bg-green-900/30 text-green-400"
-                            : "bg-red-900/30 text-red-400"
+                          ? "bg-green-900/30 text-green-400"
+                          : "bg-red-900/30 text-red-400"
                           }`}
                       >
                         {item.isActive ? "ACTIVE" : "INACTIVE"}

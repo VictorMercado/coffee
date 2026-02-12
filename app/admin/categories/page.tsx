@@ -1,29 +1,12 @@
-import { prisma } from "@/lib/prisma";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { CategoriesList } from "@/components/admin/categories-list";
+import * as CategoryRepo from "@/lib/server/repo/category";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 async function getCategories() {
-  const categories = await prisma.category.findMany({
-    orderBy: { sortOrder: "asc" },
-    include: {
-      _count: {
-        select: { menuItems: true },
-      },
-    },
-  });
-
-  return categories.map((cat) => ({
-    id: cat.id,
-    name: cat.name,
-    slug: cat.slug,
-    icon: cat.icon,
-    isActive: cat.isActive,
-    sortOrder: cat.sortOrder,
-    menuItemCount: cat._count.menuItems,
-  }));
+  return CategoryRepo.findAllCategories({ includeInactive: true });
 }
 
 export default async function CategoriesPage() {

@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/lib/cart-store";
+import { useCart } from "@/lib/client/cart-store";
 import { useSettings } from "@/lib/settings-store";
 import type { MenuItem } from "@/lib/client/api/menu-items";
 
@@ -94,7 +94,7 @@ export function MenuItemCard({ item }: { item: MenuItem; }) {
                   key={size.id}
                   onClick={(e) => {
                     e.preventDefault();
-                    setSelectedSize(size.abbreviation || size.id)
+                    setSelectedSize(size.abbreviation || size.id);
                   }}
                   className={`
                     flex-1 py-2 font-mono text-xs tracking-wider border transition-colors
@@ -113,7 +113,7 @@ export function MenuItemCard({ item }: { item: MenuItem; }) {
           <Button
             onClick={(e) => {
               e.preventDefault();
-              handleAddToCart()
+              handleAddToCart();
             }}
             className="w-full bg-transparent border border-primary text-primary hover:bg-primary hover:text-primary-foreground font-mono tracking-wider transition-colors"
           >
