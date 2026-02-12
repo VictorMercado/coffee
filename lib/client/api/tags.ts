@@ -5,6 +5,7 @@ export interface Tag {
 
 export interface CreateTagInput {
   name: string
+  slug: string
 }
 
 // Fetch all tags

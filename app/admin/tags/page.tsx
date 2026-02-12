@@ -3,6 +3,7 @@ import { AdminHeader } from "@/components/admin/admin-header";
 import { TagsList } from "@/components/admin/tags-list";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 async function getTags() {
   const tags = await prisma.tag.findMany({

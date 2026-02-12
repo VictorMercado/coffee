@@ -4,6 +4,7 @@ import { AdminHeader } from "@/components/admin/admin-header";
 import { CategoryForm } from "@/components/admin/category-form";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 async function getCategory(id: string) {
   const category = await prisma.category.findUnique({

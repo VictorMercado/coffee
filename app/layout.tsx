@@ -6,6 +6,7 @@ import { AuthProvider } from '@/components/providers/auth-provider';
 import { QueryProvider } from '@/components/providers/query-provider';
 import { SettingsProvider } from '@/components/providers/settings-provider';
 import './globals.css';
+import { Toaster } from "sonner";
 
 const _spaceGrotesk = Space_Grotesk({ subsets: ["latin"] });
 const _orbitron = Orbitron({ subsets: ["latin"] });
@@ -56,7 +57,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <meta name="apple-mobile-web-app-capable" content="yes" />
       <body className="font-sans antialiased overscroll-y-none">
+        <Toaster toastOptions={{
+          className: "!font-mono !bg-background !text-primary !rounded-none !border !border-border",
+          duration: 5000,
+        }} position="top-center" />
         <QueryProvider>
           <AuthProvider>
             <SettingsProvider>

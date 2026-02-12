@@ -1,10 +1,11 @@
 "use client"
 
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
 import { deleteMenuItem } from "@/lib/client/api"
-import { Plus, Pencil, Trash2 } from "lucide-react"
+import { Plus, Pencil, Trash2, Eye } from "lucide-react"
 
 interface MenuItem {
   id: string
@@ -54,8 +55,8 @@ export function MenuItemsList({ initialItems }: MenuItemsListProps) {
       </div>
 
       {/* Table */}
-      <div className="border border-border bg-[#1A0F08]">
-        <table className="w-full">
+      <div className="border border-border bg-[#1A0F08] overflow-x-auto">
+        <table className="w-full min-w-[700px]">
           <thead>
             <tr className="border-b border-border">
               <th className="px-4 py-3 text-left font-mono text-xs text-primary">
@@ -110,6 +111,15 @@ export function MenuItemsList({ initialItems }: MenuItemsListProps) {
                 </td>
                 <td className="px-4 py-3 text-right">
                   <div className="flex justify-end gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-primary text-primary hover:bg-primary hover:text-[#1A0F08]"
+                    >
+                      <Link href={`/menu/${item.id}`}>
+                        <Eye className="h-3 w-3" />
+                      </Link>
+                    </Button>
                     <Button
                       onClick={() =>
                         router.push(`/admin/menu-items/${item.id}/edit`)

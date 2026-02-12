@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,6 +14,9 @@ import { IngredientSelector, SelectedIngredient } from "./ingredient-selector";
 import { TagSelector } from "./tag-selector";
 import { createMenuItem, updateMenuItem, uploadMenuItemImage } from "@/lib/client/api/menu-items";
 import type { CreateMenuItemInput } from "@/lib/client/api/menu-items";
+import { toast } from "sonner";
+import Link from "next/link";
+import { Eye } from "lucide-react";
 
 interface Category {
   id: string;
@@ -97,6 +100,8 @@ export function MenuItemForm({
     }
   }, [categories, categoryId]);
 
+  // const menu
+
   // Mutation for save
   const saveMutation = useMutation({
     mutationFn: async ({
@@ -118,11 +123,10 @@ export function MenuItemForm({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["menuItems"] });
-      router.push("/admin/menu-items");
-      router.refresh();
+      toast.success("Menu item saved successfully");
     },
     onError: (error: Error) => {
-      alert(`Error:\n${error.message}`);
+      toast.error(`Error:\n${error.message}`);
     },
   });
 
@@ -151,6 +155,35 @@ export function MenuItemForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
+      {/* Form Actions */}
+      <div className="flex justify-between border border-border bg-card p-6">
+        <div className="flex gap-4">
+          <Button
+            type="submit"
+            disabled={saveMutation.isPending}
+            className="bg-primary font-mono text-background hover:bg-primary/80"
+          >
+            {saveMutation.isPending ? "SAVING..." : menuItemId ? "UPDATE ITEM" : "CREATE ITEM"}
+          </Button>
+          <Button
+            type="button"
+            onClick={() => router.back()}
+            variant="outline"
+            className="border-border font-mono text-primary"
+          >
+            CANCEL
+          </Button>
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          className="border-border font-mono text-primary"
+        >
+          <Link href={`/menu/${menuItemId}`}>
+            <Eye />
+          </Link>
+        </Button>
+      </div>
       {/* Basic Information */}
       <div className="space-y-4 border border-border bg-card p-6">
         <h3 className="font-mono text-lg text-primary">BASIC INFORMATION</h3>

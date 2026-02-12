@@ -3,6 +3,7 @@ import { AdminHeader } from "@/components/admin/admin-header";
 import { MenuItemsList } from "@/components/admin/menu-items-list";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 async function getMenuItems() {
   const menuItems = await prisma.menuItem.findMany({

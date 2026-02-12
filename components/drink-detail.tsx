@@ -3,13 +3,15 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Plus, Beaker, Flame, Clock, Sparkles, AlertTriangle } from "lucide-react";
+import { ArrowLeft, Plus, Beaker, Flame, Clock, Sparkles, AlertTriangle, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { CartDrawer } from "@/components/cart-drawer";
 import { useCart } from "@/lib/cart-store";
 import { useSettings } from "@/lib/settings-store";
+import { useSession } from "next-auth/react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface DrinkDetailProps {
   drink: {
@@ -72,6 +74,8 @@ export function DrinkDetail({ drink }: DrinkDetailProps) {
   const finalPrice = sizeData
     ? drink.basePrice + sizeData.priceModifier
     : drink.basePrice;
+
+  const { data: session } = useSession();
 
   const handleAddToCart = () => {
     addItem({
@@ -164,6 +168,24 @@ export function DrinkDetail({ drink }: DrinkDetailProps) {
 
               {/* Details */}
               <div className="flex flex-col justify-center p-6 sm:p-8 lg:p-12">
+                {session?.user.role === "ADMIN" && (
+                  <Tooltip delayDuration={0}>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-primary text-primary hover:bg-primary hover:text-[#1A0F08] mb-4 self-start"
+                      >
+                        <Link href={`/admin/menu-items/${drink.id}/edit`}>
+                          <Pencil className="h-3 w-3" />
+                        </Link>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Only visible to admins</p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
                 <div className="inline-block border border-border px-3 py-0.5 mb-4 self-start">
                   <span className="font-mono text-muted-foreground text-[10px] tracking-[0.3em] uppercase">
                     {drink.category.name}

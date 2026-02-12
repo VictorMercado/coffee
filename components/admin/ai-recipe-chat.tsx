@@ -34,7 +34,7 @@ export function AiRecipeChat() {
       {/* Floating toggle button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#FF6B35] text-[#1A0F08] shadow-lg transition-all hover:bg-[#FF6B35]/90 hover:scale-105"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-[#FF6B35] text-[#1A0F08] shadow-lg transition-all hover:bg-[#FF6B35]/90 hover:scale-105"
       >
         {isOpen ? (
           <X className="h-6 w-6" />
@@ -45,7 +45,7 @@ export function AiRecipeChat() {
 
       {/* Chat panel */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50 flex h-[500px] w-[400px] flex-col border border-[#FF6B35]/30 bg-[#1A0F08] shadow-2xl">
+        <div className="fixed bottom-24 right-4 sm:right-6 z-50 flex h-[500px] w-[calc(100vw-2rem)] sm:w-[400px] max-w-[400px] flex-col border border-[#FF6B35]/30 bg-[#1A0F08] shadow-2xl">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-[#FF6B35]/30 px-4 py-3">
             <div className="flex items-center gap-2">

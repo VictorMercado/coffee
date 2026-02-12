@@ -72,8 +72,8 @@ export function SizesList({ sizes: initialSizes }: SizesListProps) {
           </div>
         )}
 
-        <div className="border border-border bg-[#1A0F08]">
-          <table className="w-full">
+        <div className="border border-border bg-[#1A0F08] overflow-x-auto">
+          <table className="w-full min-w-[700px]">
             <thead className="border-b border-border">
               <tr>
                 <th className="px-6 py-4 text-left font-mono text-xs text-primary tracking-wider">

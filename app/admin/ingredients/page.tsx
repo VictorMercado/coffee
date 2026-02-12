@@ -48,13 +48,13 @@ export default function IngredientsPage() {
           </Button>
         </div>
 
-        <div className="border border-border bg-[#1A0F08]">
+        <div className="border border-border bg-[#1A0F08] overflow-x-auto">
           {isLoading ? (
             <div className="p-12 text-center font-mono text-primary">
               LOADING...
             </div>
           ) : (
-            <table className="w-full">
+            <table className="w-full min-w-[700px]">
               <thead>
                 <tr className="border-b border-border">
                   <th className="px-6 py-4 text-left font-mono text-xs text-primary tracking-wider">
@@ -104,17 +104,17 @@ export default function IngredientsPage() {
                             onClick={() =>
                               router.push(`/admin/ingredients/${ingredient.id}/edit`)
                             }
-                            variant="ghost"
+                            variant="outline"
                             size="icon"
-                            className="h-8 w-8 text-foreground hover:text-primary hover:bg-muted"
+                            className="border-primary text-primary hover:bg-primary hover:text-[#1A0F08]"
                           >
                             <Pencil className="h-4 w-4" />
                           </Button>
                           <Button
                             onClick={() => handleDelete(ingredient.id)}
-                            variant="ghost"
+                            variant="outline"
                             size="icon"
-                            className="h-8 w-8 text-foreground hover:text-destructive hover:bg-muted"
+                            className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white disabled:opacity-50"
                             disabled={deleteMutation.isPending}
                           >
                             <Trash2 className="h-4 w-4" />

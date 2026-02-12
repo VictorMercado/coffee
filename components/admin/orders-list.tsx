@@ -1,50 +1,50 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { Button } from "@/components/ui/button"
-import { updateOrderStatus } from "@/lib/client/api"
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { updateOrderStatus } from "@/lib/client/api";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Eye, Clock, CheckCircle2, XCircle, Package } from "lucide-react"
+} from "@/components/ui/dialog";
+import { Eye, Clock, CheckCircle2, XCircle, Package } from "lucide-react";
 
 interface OrderItem {
-  id: string
-  name: string
-  size: string
-  quantity: number
-  price: number
+  id: string;
+  name: string;
+  size: string;
+  quantity: number;
+  price: number;
 }
 
 interface Order {
-  id: string
-  orderNumber: string
-  customerName: string
-  customerEmail: string | null
-  status: string
-  subtotal: number
-  tax: number
-  total: number
-  createdAt: string
-  itemCount: number
-  items: OrderItem[]
+  id: string;
+  orderNumber: string;
+  customerName: string;
+  customerEmail: string | null;
+  status: string;
+  subtotal: number;
+  tax: number;
+  total: number;
+  createdAt: string;
+  itemCount: number;
+  items: OrderItem[];
 }
 
 interface OrdersListProps {
-  initialOrders: Order[]
+  initialOrders: Order[];
 }
 
 const statusConfig = {
@@ -53,49 +53,67 @@ const statusConfig = {
   READY: { label: "READY", icon: CheckCircle2, color: "text-green-500", bg: "bg-green-900/30" },
   COMPLETED: { label: "COMPLETED", icon: CheckCircle2, color: "text-green-400", bg: "bg-green-900/20" },
   CANCELLED: { label: "CANCELLED", icon: XCircle, color: "text-red-500", bg: "bg-red-900/30" },
-}
+};
+
+function ClientDate({ date }: { date: string; }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) return <span>...</span>;
+
+  return (
+    <span>
+      {new Date(date).toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      })}
+    </span>
+  );
+};
 
 export function OrdersList({ initialOrders }: OrdersListProps) {
-  const router = useRouter()
-  const queryClient = useQueryClient()
-  const [orders, setOrders] = useState<Order[]>(initialOrders)
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
-  const [detailsOpen, setDetailsOpen] = useState(false)
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const [orders, setOrders] = useState<Order[]>(initialOrders);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   const updateStatusMutation = useMutation({
-    mutationFn: ({ orderId, status }: { orderId: string; status: string }) =>
+    mutationFn: ({ orderId, status }: { orderId: string; status: string; }) =>
       updateOrderStatus(orderId, status),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["orders"] })
-      router.refresh()
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      router.refresh();
     },
     onError: (error: Error) => {
-      console.error("Error updating order status:", error)
-      alert("Failed to update order status")
+      console.error("Error updating order status:", error);
+      alert("Failed to update order status");
     },
-  })
+  });
 
   const handleStatusChange = (orderId: string, newStatus: string) => {
-    updateStatusMutation.mutate({ orderId, status: newStatus })
+    updateStatusMutation.mutate({ orderId, status: newStatus });
     setOrders(orders.map(order =>
       order.id === orderId ? { ...order, status: newStatus } : order
-    ))
-  }
+    ));
+  };
 
   const handleViewDetails = (order: Order) => {
-    setSelectedOrder(order)
-    setDetailsOpen(true)
-  }
+    setSelectedOrder(order);
+    setDetailsOpen(true);
+  };
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
+    const date = new Date(dateString);
     return date.toLocaleString("en-US", {
       month: "short",
       day: "numeric",
       hour: "numeric",
       minute: "2-digit",
-    })
-  }
+    });
+  };
 
   return (
     <>
@@ -127,8 +145,8 @@ export function OrdersList({ initialOrders }: OrdersListProps) {
         </div>
 
         {/* Orders Table */}
-        <div className="border border-border bg-[#1A0F08]">
-          <table className="w-full">
+        <div className="border border-border bg-[#1A0F08] overflow-x-auto">
+          <table className="w-full min-w-[900px]">
             <thead>
               <tr className="border-b border-border">
                 <th className="px-4 py-3 text-left font-mono text-xs text-primary">
@@ -165,9 +183,9 @@ export function OrdersList({ initialOrders }: OrdersListProps) {
                 </tr>
               ) : (
                 orders.map((order) => {
-                  const StatusIcon = statusConfig[order.status as keyof typeof statusConfig]?.icon || Clock
-                  const statusColor = statusConfig[order.status as keyof typeof statusConfig]?.color || "text-gray-500"
-                  const statusBg = statusConfig[order.status as keyof typeof statusConfig]?.bg || "bg-gray-900/30"
+                  const StatusIcon = statusConfig[order.status as keyof typeof statusConfig]?.icon || Clock;
+                  const statusColor = statusConfig[order.status as keyof typeof statusConfig]?.color || "text-gray-500";
+                  const statusBg = statusConfig[order.status as keyof typeof statusConfig]?.bg || "bg-gray-900/30";
 
                   return (
                     <tr
@@ -217,7 +235,7 @@ export function OrdersList({ initialOrders }: OrdersListProps) {
                         </Select>
                       </td>
                       <td className="px-4 py-3 font-mono text-xs text-[#F5F5DC]/60">
-                        {formatDate(order.createdAt)}
+                        <ClientDate date={order.createdAt} />
                       </td>
                       <td className="px-4 py-3 text-right">
                         <Button
@@ -230,7 +248,7 @@ export function OrdersList({ initialOrders }: OrdersListProps) {
                         </Button>
                       </td>
                     </tr>
-                  )
+                  );
                 })
               )}
             </tbody>
@@ -311,5 +329,5 @@ export function OrdersList({ initialOrders }: OrdersListProps) {
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }

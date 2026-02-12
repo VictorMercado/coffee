@@ -58,8 +58,8 @@ export function CategoriesList({ initialCategories }: CategoriesListProps) {
       </div>
 
       {/* Table */}
-      <div className="border border-border bg-[#1A0F08]">
-        <table className="w-full">
+      <div className="border border-border bg-background overflow-x-auto">
+        <table className="w-full min-w-[800px]">
           <thead>
             <tr className="border-b border-border">
               <th className="px-4 py-3 text-left font-mono text-xs text-primary">
@@ -119,11 +119,10 @@ export function CategoriesList({ initialCategories }: CategoriesListProps) {
                   </td>
                   <td className="px-4 py-3">
                     <span
-                      className={`inline-block px-2 py-0.5 font-mono text-xs ${
-                        category.isActive
+                      className={`inline-block px-2 py-0.5 font-mono text-xs ${category.isActive
                           ? "bg-green-900/30 text-green-400"
                           : "bg-red-900/30 text-red-400"
-                      }`}
+                        }`}
                     >
                       {category.isActive ? "ACTIVE" : "INACTIVE"}
                     </span>

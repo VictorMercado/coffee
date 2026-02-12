@@ -75,7 +75,7 @@ export function AccountContent({ user }: AccountContentProps) {
                           YOU'RE SIGNED IN AS GUEST
                         </h2>
                         <p className="text-sm text-muted-foreground mt-1">
-                          Browsing mode • Limited features
+                          Limited features
                         </p>
                       </div>
                     </div>

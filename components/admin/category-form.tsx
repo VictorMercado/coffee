@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { createCategory, updateCategory } from "@/lib/client/api"
+import { toast } from "sonner"
 
 interface Category {
   id: string
@@ -51,9 +52,8 @@ export function CategoryForm({ category }: CategoryFormProps) {
     mutationFn: (data: any) =>
       isEditing ? updateCategory(category.id, data) : createCategory(data),
     onSuccess: () => {
+      toast.success("Category saved successfully")
       queryClient.invalidateQueries({ queryKey: ["categories"] })
-      router.push("/admin/categories")
-      router.refresh()
     },
     onError: (error: Error) => {
       const errorMessage = error.message || "Failed to save category"
@@ -69,6 +69,7 @@ export function CategoryForm({ category }: CategoryFormProps) {
         }
       } catch {}
       setError(errorMessage)
+      toast.error(errorMessage)
     },
   })
 

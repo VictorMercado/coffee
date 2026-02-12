@@ -3,6 +3,7 @@ import { AdminHeader } from "@/components/admin/admin-header";
 import { MenuItemForm } from "@/components/admin/menu-item-form";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 async function getFormData() {
   const [categories, sizes, tags, ingredients] = await Promise.all([

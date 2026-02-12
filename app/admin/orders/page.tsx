@@ -3,6 +3,7 @@ import { AdminHeader } from "@/components/admin/admin-header";
 import { OrdersList } from "@/components/admin/orders-list";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 async function getOrders() {
   const orders = await prisma.order.findMany({

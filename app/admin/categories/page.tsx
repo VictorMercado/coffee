@@ -3,6 +3,7 @@ import { AdminHeader } from "@/components/admin/admin-header";
 import { CategoriesList } from "@/components/admin/categories-list";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 async function getCategories() {
   const categories = await prisma.category.findMany({

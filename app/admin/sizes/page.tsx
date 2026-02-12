@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { SizesList } from "@/components/admin/sizes-list";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 async function getSizes() {
   const sizes = await prisma.size.findMany({

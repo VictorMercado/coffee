@@ -148,6 +148,10 @@ export async function POST(req: Request) {
           ingredients: { ingredientId: string; quantity?: string; isOptional?: boolean; }[];
         }) => {
           try {
+            const sizes = await prisma.size.findMany({
+              where: { isActive: true },
+              orderBy: { sortOrder: "asc" },
+            });
             const menuItem = await prisma.menuItem.create({
               data: {
                 name,
@@ -167,6 +171,12 @@ export async function POST(req: Request) {
               include: {
                 category: true,
                 ingredients: { include: { ingredient: true } },
+              },
+            });
+            await prisma.menuItemSize.create({
+              data: {
+                menuItemId: menuItem.id,
+                sizeId: sizes[0].id,
               },
             });
             revalidatePath("/admin/menu-items");

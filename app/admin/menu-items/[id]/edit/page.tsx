@@ -4,6 +4,7 @@ import { AdminHeader } from "@/components/admin/admin-header";
 import { MenuItemForm } from "@/components/admin/menu-item-form";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 async function getMenuItemData(id: string) {
   const [menuItem, categories, sizes, tags, ingredients] = await Promise.all([
@@ -131,6 +132,7 @@ export default async function EditMenuItemPage({
       />
       <div className="container mx-auto p-8">
         <MenuItemForm
+          key={id}
           menuItemId={id}
           initialData={data.menuItem}
           categories={data.categories}

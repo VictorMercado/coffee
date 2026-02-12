@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Coffee, Star, Eye, EyeOff } from "lucide-react";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 async function getDashboardData() {
   const [
@@ -86,7 +87,7 @@ export default async function AdminDashboard() {
         description="Overview of your menu items and statistics"
       />
 
-      <div className="p-8 space-y-8">
+      <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8">
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Total Items */}
@@ -216,7 +217,7 @@ export default async function AdminDashboard() {
                   href={`/admin/menu-items/${item.id}/edit`}
                   className="block border border-border/20 bg-[#2D1810] p-4 hover:bg-[#3D2820] transition-colors"
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="font-mono text-sm text-[#F5F5DC]">
@@ -226,7 +227,7 @@ export default async function AdminDashboard() {
                           <Star className="h-3 w-3 text-primary fill-[#D4AF37]" />
                         )}
                       </div>
-                      <div className="flex items-center gap-3 text-xs">
+                      <div className="flex items-center gap-3 text-xs flex-wrap">
                         <span className="font-mono text-[#F5F5DC]/60">
                           {item.category}
                         </span>
@@ -235,7 +236,7 @@ export default async function AdminDashboard() {
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 flex-wrap">
                       <span
                         className={`px-2 py-0.5 font-mono text-xs ${item.isActive
                             ? "bg-green-900/30 text-green-400"
