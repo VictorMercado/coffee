@@ -1,4 +1,4 @@
-const CACHE_NAME = "orbit-coffee-v3";
+const CACHE_NAME = "orbit-coffee-v4";
 const STATIC_ASSETS = [
   "/icon-light-32x32.png",
   "/icon-dark-32x32.png",
@@ -29,21 +29,20 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const { request } = event;
 
-  // Skip non-GET and API/auth requests
-  if (
-    request.method !== "GET" ||
-    request.url.includes("/api/") ||
-    request.url.includes("/auth/") ||
-    !request.url.startsWith("http")
-  ) {
+  // Regex for static assets
+  const isStaticAsset = /\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$/i.test(request.url);
+
+  // 1. For HTML/Navigation/API/Auth -> Network Only (never cache)
+  if (!isStaticAsset || request.method !== "GET" || request.url.includes("/api/")) {
     return;
   }
 
-  // Network-first for everything (pages and assets)
-  // Falls back to cache only when offline
+  // 2. For Static Assets -> Stale-While-Revalidate (or Network First)
+  // Let's stick to Network First for safety, but allow cache fallback
   event.respondWith(
     fetch(request)
       .then((response) => {
+        // Cache only valid responses
         if (response.ok && response.type === "basic") {
           const clone = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
