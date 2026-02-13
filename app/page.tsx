@@ -3,6 +3,7 @@ import { MenuItem } from "@/lib/client/api/menu-items";
 import * as MenuItemRepo from "@/lib/server/repo/menu-item";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 async function getFeaturedItems(): Promise<MenuItem[]> {
   const menuItems = await MenuItemRepo.findFeaturedMenuItems(4);

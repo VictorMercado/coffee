@@ -1,4 +1,4 @@
-const CACHE_NAME = "orbit-coffee-v4";
+const CACHE_NAME = "orbit-coffee-v6";
 const STATIC_ASSETS = [
   "/icon-light-32x32.png",
   "/icon-dark-32x32.png",
@@ -33,7 +33,8 @@ self.addEventListener("fetch", (event) => {
   const isStaticAsset = /\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$/i.test(request.url);
 
   // 1. For HTML/Navigation/API/Auth -> Network Only (never cache)
-  if (!isStaticAsset || request.method !== "GET" || request.url.includes("/api/")) {
+  // Also skip non-http requests (e.g. chrome-extension://)
+  if (!isStaticAsset || request.method !== "GET" || request.url.includes("/api/") || !request.url.startsWith("http")) {
     return;
   }
 
@@ -49,6 +50,13 @@ self.addEventListener("fetch", (event) => {
         }
         return response;
       })
-      .catch(() => caches.match(request))
+      .catch((err) => {
+        // If network fails, try cache
+        return caches.match(request).then((cachedResponse) => {
+          if (cachedResponse) return cachedResponse;
+          // If neither network nor cache works, throw error (or return offline page)
+          throw err;
+        });
+      })
   );
 });

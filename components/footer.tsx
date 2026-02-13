@@ -1,4 +1,4 @@
-import Image from "next/image"
+import Image from "next/image";
 
 export function Footer() {
   return (
@@ -8,12 +8,12 @@ export function Footer() {
           {/* Brand */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-3 mb-4">
-            <Image
-              src="/icon.svg"
-              alt="Orbit Coffee"
-              width={46}
-              height={46}
-            />
+              <Image
+                src="/icon.svg"
+                alt="Orbit Coffee"
+                width={46}
+                height={46}
+              />
               <div>
                 <h3 className="font-mono text-primary text-lg tracking-[0.2em]">ORBIT</h3>
                 <p className="text-[10px] text-muted-foreground tracking-[0.3em]">COFFEE CO.</p>
@@ -62,5 +62,5 @@ export function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }

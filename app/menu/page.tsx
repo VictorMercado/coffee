@@ -4,6 +4,7 @@ import * as MenuItemRepo from "@/lib/server/repo/menu-item";
 import * as CategoryRepo from "@/lib/server/repo/category";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 async function getMenuData() {
   const [menuItems, categories] = await Promise.all([
