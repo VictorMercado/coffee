@@ -1,5 +1,4 @@
 import { MenuContent } from "@/components/menu-content";
-import { MenuItem } from "@/lib/client/api/menu-items";
 import * as MenuItemRepo from "@/lib/server/repo/menu-item";
 import * as CategoryRepo from "@/lib/server/repo/category";
 

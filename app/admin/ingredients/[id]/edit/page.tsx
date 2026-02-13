@@ -6,6 +6,9 @@ import { AdminHeader } from "@/components/admin/admin-header";
 import { IngredientForm } from "@/components/admin/forms/ingredient-form";
 import { fetchIngredient } from "@/lib/client/api";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default function EditIngredientPage() {
   const params = useParams();
   const ingredientId = params.id as string;

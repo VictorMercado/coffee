@@ -3,6 +3,7 @@ import { OrderConfirmationContent } from "@/components/order-confirmation-conten
 import * as OrderRepo from "@/lib/server/repo/order";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 async function getOrder(id: string) {
   const order = await OrderRepo.findOrderById(id);
