@@ -2,8 +2,10 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import * as bcrypt from "bcryptjs";
 import * as UserRepo from "@/lib/server/repo/user";
+import { authConfig } from "@/lib/auth.config";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  ...authConfig,
   providers: [
     Credentials({
       credentials: {
@@ -40,12 +42,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
+    ...authConfig.callbacks,
     async jwt({ token, user }) {
+      // Run base logic first
       if (user) {
         token.role = user.role;
         token.username = user.username;
       }
-      // Refresh role from database on each request
+
+      // Refresh role from database on each request (Node.js only)
       if (token.sub) {
         const dbUser = await UserRepo.findUserById(token.sub);
         if (dbUser) {
@@ -55,20 +60,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return token;
     },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.role = token.role as string;
-        session.user.id = token.sub as string;
-        session.user.username = token.username as string;
-      }
-      return session;
-    },
   },
-  pages: {
-    signIn: "/admin/login",
-  },
-  session: {
-    strategy: "jwt",
-  },
-  secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
 });
+

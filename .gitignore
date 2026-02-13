@@ -32,3 +32,8 @@ next-env.d.ts
 
 # local data (uploads, sqlite)
 /data/
+
+*.db
+*.db-journal
+*.db-wal
+*.db-shm

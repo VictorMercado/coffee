@@ -1,30 +1,35 @@
+import NextAuth from "next-auth";
+import { authConfig } from "@/lib/auth.config";
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { auth } from "@/lib/server/auth";
 
-export async function middleware(request: NextRequest) {
-  const session = await auth();
+const { auth } = NextAuth(authConfig);
+
+export default auth((req) => {
+  const { nextUrl } = req;
+  const isLoggedIn = !!req.auth;
+  const user = req.auth?.user;
 
   // Protect /admin routes (except login page)
-  if (request.nextUrl.pathname.startsWith("/admin")) {
+  if (nextUrl.pathname.startsWith("/admin")) {
     // Allow access to login page
-    if (request.nextUrl.pathname === "/admin/login") {
-      // If already authenticated, redirect to admin dashboard
-      if (session?.user?.role === "ADMIN") {
-        return NextResponse.redirect(new URL("/admin/menu-items", request.url));
+    if (nextUrl.pathname === "/admin/login") {
+      // If already authenticated as ADMIN, redirect to dashboard
+      if (isLoggedIn && user?.role === "ADMIN") {
+        return NextResponse.redirect(new URL("/admin/menu-items", nextUrl));
       }
       return NextResponse.next();
     }
 
-    // For all other admin routes, check authentication
-    if (!session?.user || session.user.role !== "ADMIN") {
-      return NextResponse.redirect(new URL("/admin/login", request.url));
+    // For all other admin routes, check authentication and role
+    if (!isLoggedIn || user?.role !== "ADMIN") {
+      return NextResponse.redirect(new URL("/admin/login", nextUrl));
     }
   }
 
   return NextResponse.next();
-}
+});
 
 export const config = {
   matcher: ["/admin/:path*"],
 };
+
