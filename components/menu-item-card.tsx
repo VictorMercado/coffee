@@ -16,7 +16,7 @@ export function MenuItemCard({ item }: { item: MenuItem; }) {
   // Filter item sizes to only show active sizes from settings store
   const availableSizes = item.sizes.filter((itemSize) =>
     activeSizes.some((activeSize) => activeSize.id === itemSize.abbreviation)
-  );
+  ).sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
 
   // Use the first available active size as default, or pastries have no sizes
   const defaultSize = availableSizes.length > 0 ? availableSizes[1]?.abbreviation || availableSizes[0]?.abbreviation || "MD" : null;

@@ -32,6 +32,7 @@ interface DrinkDetailProps {
       abbreviation: string;
       priceModifier: number;
       isDefault: boolean;
+      sortOrder: number;
     }[];
     ingredients: {
       id: string;
@@ -58,7 +59,7 @@ export function DrinkDetail({ drink }: DrinkDetailProps) {
 
   const availableSizes = drink.sizes.filter((itemSize) =>
     activeSizes.some((activeSize) => activeSize.id === itemSize.abbreviation)
-  );
+  ).sort((a, b) => a.sortOrder - b.sortOrder);
 
   const defaultSize =
     availableSizes.find((s) => s.isDefault)?.abbreviation ||

@@ -27,6 +27,7 @@ async function getDrink(id: string) {
       abbreviation: s.size.abbreviation,
       priceModifier: s.size.priceModifier,
       isDefault: s.isDefault,
+      sortOrder: s.size.sortOrder,
     })),
     ingredients: menuItem.ingredients.map((i) => ({
       id: i.ingredient.id,
