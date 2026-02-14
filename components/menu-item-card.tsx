@@ -37,7 +37,7 @@ export function MenuItemCard({ item }: { item: MenuItem; }) {
 
   return (
     <Link href={`/menu/${item.id}`} className="hover:text-primary transition-colors">
-      <div className="group bg-card border border-border hover:border-primary transition-colors">
+      <div className="flex flex-col h-full group bg-card border border-border hover:border-primary transition-colors">
         {/* Image with retro styling */}
         <div className="aspect-square bg-muted relative overflow-hidden">
           {item.imagePath ? (
@@ -72,54 +72,58 @@ export function MenuItemCard({ item }: { item: MenuItem; }) {
           )}
         </div>
         {/* Content */}
-        <div className="p-4">
-          <div className="flex items-start justify-between gap-2 mb-2">
-            <h3 className="font-mono text-foreground text-sm tracking-wider uppercase">
-              {item.name}
-            </h3>
-            {settings?.pricingEnabled && (
-              <span className="font-mono text-primary text-lg">
-                ${finalPrice.toFixed(2)}
-              </span>
-            )}
-          </div>
-          <p className="text-muted-foreground text-xs leading-relaxed mb-4">
-            {item.description}
-          </p>
-          {/* Size selector - only for items with active sizes */}
-          {availableSizes.length > 0 && (
-            <div className="flex gap-2 mb-4">
-              {availableSizes.map((size) => (
-                <button
-                  key={size.id}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setSelectedSize(size.abbreviation || size.id);
-                  }}
-                  className={`
-                    flex-1 py-2 font-mono text-xs tracking-wider border transition-colors
-                    ${selectedSize === (size.abbreviation || size.id)
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-transparent text-muted-foreground border-border hover:border-foreground hover:text-foreground"
-                    }
-                  `}
-                >
-                  {size.abbreviation || size.id}
-                </button>
-              ))}
+        <div className="grow flex flex-col justify-between p-4 space-y-4">
+          <div className="flex flex-col justify-between space-y-2">
+            <div className="flex items-start justify-between gap-2">
+              <h3 className="font-mono text-foreground text-sm tracking-wider uppercase">
+                {item.name}
+              </h3>
+              {settings?.pricingEnabled && (
+                <span className="font-mono text-primary text-lg">
+                  ${finalPrice.toFixed(2)}
+                </span>
+              )}
             </div>
-          )}
-          {/* Add to cart button */}
-          <Button
-            onClick={(e) => {
-              e.preventDefault();
-              handleAddToCart();
-            }}
-            className="w-full bg-transparent border border-primary text-primary hover:bg-primary hover:text-primary-foreground font-mono tracking-wider transition-colors"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            ADD TO ORDER
-          </Button>
+            <p className="text-muted-foreground text-xs leading-relaxed">
+              {item.description}
+            </p>
+          </div>
+          {/* Size selector - only for items with active sizes */}
+          <div className="space-y-4">
+            {availableSizes.length > 0 && (
+              <div className="flex gap-2">
+                {availableSizes.map((size) => (
+                  <button
+                    key={size.id}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setSelectedSize(size.abbreviation || size.id);
+                    }}
+                    className={`
+                      flex-1 py-2 font-mono text-xs tracking-wider border transition-colors
+                      ${selectedSize === (size.abbreviation || size.id)
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-transparent text-muted-foreground border-border hover:border-foreground hover:text-foreground"
+                      }
+                    `}
+                  >
+                    {size.abbreviation || size.id}
+                  </button>
+                ))}
+              </div>
+            )}
+            {/* Add to cart button */}
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                handleAddToCart();
+              }}
+              className="w-full bg-transparent border border-primary text-primary hover:bg-primary hover:text-primary-foreground font-mono tracking-wider transition-colors"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              ADD TO ORDER
+            </Button>
+          </div>
         </div>
       </div>
     </Link>
