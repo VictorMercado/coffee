@@ -1,4 +1,4 @@
-const CACHE_NAME = "orbit-coffee-v6";
+const CACHE_NAME = "orbit-coffee-v7";
 const STATIC_ASSETS = [
   "/icon-light-32x32.png",
   "/icon-dark-32x32.png",
@@ -28,13 +28,27 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   const { request } = event;
+  const url = new URL(request.url);
 
-  // Regex for static assets
-  const isStaticAsset = /\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$/i.test(request.url);
+  // Skip non-GET, non-http, API calls
+  if (request.method !== "GET" || !request.url.startsWith("http") || request.url.includes("/api/")) {
+    return;
+  }
 
-  // 1. For HTML/Navigation/API/Auth -> Network Only (never cache)
-  // Also skip non-http requests (e.g. chrome-extension://)
-  if (!isStaticAsset || request.method !== "GET" || request.url.includes("/api/") || !request.url.startsWith("http")) {
+  // Skip Next.js RSC data requests (these carry dynamic page data)
+  if (url.searchParams.has("_rsc") || request.headers.get("RSC") || request.headers.get("Next-Router-State-Tree")) {
+    return;
+  }
+
+  // Skip Next.js data routes
+  if (url.pathname.startsWith("/_next/data/")) {
+    return;
+  }
+
+  // Only cache static assets (images, fonts, etc.)
+  const isStaticAsset = /\.(png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$/i.test(request.url);
+
+  if (!isStaticAsset) {
     return;
   }
 
