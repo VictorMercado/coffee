@@ -1,58 +1,47 @@
-export interface MenuItemSize {
-  id: string
-  name: string
-  abbreviation: string
-  priceModifier: number
-}
+import type { z } from "zod";
+import type { menuItemRequestSchema } from "@/lib/validations";
+import type {
+  MenuItemListSizeDTO,
+  MenuItemSizeDTO,
+  MenuItemTagDTO,
+  MenuItemIngredientDTO,
+  RecipeStepDTO,
+  MenuItemListDTO,
+  MenuItemDetailDTO,
+} from "@/lib/server/dtos";
 
-export interface MenuItem {
-  id: string
-  name: string
-  description: string
-  basePrice: number
-  categoryId: string
-  imagePath?: string | null
-  isActive: boolean
-  isFeatured: boolean
-  tags: string[]
-  sizes: MenuItemSize[]
-}
+// ── Re-export server DTOs as client-friendly names ─────────────
 
-export interface CreateMenuItemInput {
-  name: string
-  description: string
-  basePrice: number
-  categoryId: string
-  isActive: boolean
-  isFeatured: boolean
-  sortOrder: number
-  sizeIds: string[]
-  ingredientIds: string[]
-  tagIds: string[]
-  recipeSteps: {
-    stepNumber: number
-    instruction: string
-    duration?: string
-    temperature?: string
-  }[]
-}
+export type MenuItemSize = MenuItemListSizeDTO;
+export type MenuItemDetailSize = MenuItemSizeDTO;
+export type MenuItemTag = MenuItemTagDTO;
+export type MenuItemIngredient = MenuItemIngredientDTO;
+export type RecipeStep = RecipeStepDTO;
+export type MenuItem = MenuItemListDTO;
+export type MenuItemDetail = MenuItemDetailDTO;
+
+// ── Input type derived from Zod schema ─────────────────────────
+
+export type CreateMenuItemInput = z.infer<typeof menuItemRequestSchema>;
+
+// ── Fetchers ───────────────────────────────────────────────────
 
 // Fetch all menu items (public)
 export async function fetchMenuItems(): Promise<MenuItem[]> {
-  const response = await fetch("/api/menu-items", { cache: "no-store" })
+  const response = await fetch("/api/menu-items", { cache: "no-store" });
   if (!response.ok) {
-    throw new Error("Failed to fetch menu items")
+    throw new Error("Failed to fetch menu items");
   }
-  return response.json()
+  return response.json();
 }
 
-// Fetch single menu item
-export async function fetchMenuItem(id: string): Promise<MenuItem> {
-  const response = await fetch(`/api/menu-items/${id}`, { cache: "no-store" })
+// Fetch single menu item (detail)
+export async function fetchMenuItem(id: string): Promise<MenuItemDetail> {
+  const response = await fetch(`/api/menu-items/${id}`, { cache: "no-store" });
   if (!response.ok) {
-    throw new Error("Failed to fetch menu item")
+    throw new Error("Failed to fetch menu item");
   }
-  return response.json()
+  return response.json();
 }
 
 // Create menu item
@@ -63,14 +52,14 @@ export async function createMenuItem(
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
-  })
+  });
 
   if (!response.ok) {
-    const errorData = await response.json()
-    throw new Error(errorData.error || "Failed to create menu item")
+    const errorData = await response.json();
+    throw new Error(errorData.error || "Failed to create menu item");
   }
 
-  return response.json()
+  return response.json();
 }
 
 // Update menu item
@@ -82,25 +71,25 @@ export async function updateMenuItem(
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
-  })
+  });
 
   if (!response.ok) {
-    const errorData = await response.json()
-    throw new Error(errorData.error || "Failed to update menu item")
+    const errorData = await response.json();
+    throw new Error(errorData.error || "Failed to update menu item");
   }
 
-  return response.json()
+  return response.json();
 }
 
 // Delete menu item
 export async function deleteMenuItem(id: string): Promise<void> {
   const response = await fetch(`/api/menu-items/${id}`, {
     method: "DELETE",
-  })
+  });
 
   if (!response.ok) {
-    const errorData = await response.json()
-    throw new Error(errorData.error || "Failed to delete menu item")
+    const errorData = await response.json();
+    throw new Error(errorData.error || "Failed to delete menu item");
   }
 }
 
@@ -108,19 +97,19 @@ export async function deleteMenuItem(id: string): Promise<void> {
 export async function uploadMenuItemImage(
   menuItemId: string,
   imageFile: File
-): Promise<{ imagePath: string }> {
-  const formData = new FormData()
-  formData.append("image", imageFile)
+): Promise<{ imagePath: string; }> {
+  const formData = new FormData();
+  formData.append("image", imageFile);
 
   const response = await fetch(`/api/menu-items/${menuItemId}/upload-image`, {
     method: "POST",
     body: formData,
-  })
+  });
 
   if (!response.ok) {
-    const errorData = await response.json()
-    throw new Error(errorData.error || "Failed to upload image")
+    const errorData = await response.json();
+    throw new Error(errorData.error || "Failed to upload image");
   }
 
-  return response.json()
+  return response.json();
 }

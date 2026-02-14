@@ -2,13 +2,20 @@ import type { MenuItem } from "@/lib/types/menu-item";
 
 export type MenuItemDTO = Omit<MenuItem, "createdAt" | "updatedAt">;
 
-export interface MenuItemSizeDTO {
+// Size shape in list responses (GET /api/menu-items, server pages)
+export interface MenuItemListSizeDTO {
   id: string;
-  sizeId: string;
   name: string;
   abbreviation: string;
   priceModifier: number;
+  sortOrder?: number;
+}
+
+// Size shape in detail responses (GET /api/menu-items/[id])
+export interface MenuItemSizeDTO extends MenuItemListSizeDTO {
+  sizeId: string;
   isDefault?: boolean;
+  sortOrder: number;
 }
 
 export interface MenuItemTagDTO {
@@ -35,16 +42,34 @@ export interface RecipeStepDTO {
   temperature: string | null;
 }
 
-export interface MenuItemListDTO extends MenuItemDTO {
-  category: string | { name: string; };
-  sizes: MenuItemSizeDTO[];
-  tags: string[] | MenuItemTagDTO[];
+// Shape returned by GET /api/menu-items and server page transforms
+export interface MenuItemListDTO {
+  id: string;
+  name: string;
+  description: string;
+  basePrice: number;
+  categoryId: string;
+  category: string;
+  imagePath: string | null;
+  isActive: boolean;
+  isFeatured: boolean;
+  tags: string[];
+  sizes: MenuItemListSizeDTO[];
 }
 
-export interface MenuItemDetailDTO extends MenuItemDTO {
+// Shape returned by GET /api/menu-items/[id]
+export interface MenuItemDetailDTO {
+  id: string;
+  name: string;
+  description: string;
+  basePrice: number;
+  imagePath: string | null;
+  isFeatured: boolean;
+  isActive: boolean;
+  sortOrder: number;
   category: { id: string; name: string; slug: string; };
   sizes: MenuItemSizeDTO[];
-  tags: string[] | MenuItemTagDTO[];
+  tags: MenuItemTagDTO[];
   ingredients: MenuItemIngredientDTO[];
   recipeSteps: RecipeStepDTO[];
 }

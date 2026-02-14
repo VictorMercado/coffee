@@ -1,36 +1,18 @@
-export interface OrderItem {
-  id: string;
-  name: string;
-  size: string;
-  quantity: number;
-  price: number;
-}
+import type { z } from "zod";
+import type { orderRequestSchema, orderUpdateRequestSchema } from "@/lib/validations";
+import type { OrderListDTO } from "@/lib/server/dtos";
 
-export interface Order {
-  id: string;
-  orderNumber: string;
-  userId: string | null;
-  customerName: string;
-  customerEmail: string | null;
-  status: string;
-  subtotal: number;
-  tax: number;
-  total: number;
-  createdAt: string;
-  items: OrderItem[];
-}
+// ── Re-export server DTOs as client-friendly names ─────────────
 
-export interface CreateOrderInput {
-  customerName: string;
-  customerEmail: string | null;
-  items: {
-    menuItemId: string;
-    quantity: number;
-    size: string;
-    price: number;
-  }[];
-  total: number;
-}
+export type Order = OrderListDTO;
+export type OrderItem = OrderListDTO["items"][number];
+
+// ── Input types derived from Zod schemas ───────────────────────
+
+export type CreateOrderInput = z.infer<typeof orderRequestSchema>;
+export type UpdateOrderInput = z.infer<typeof orderUpdateRequestSchema>;
+
+// ── Fetchers ───────────────────────────────────────────────────
 
 // Fetch user's orders
 export async function fetchMyOrders(): Promise<Order[]> {
@@ -86,15 +68,7 @@ export async function fetchOrder(id: string): Promise<Order> {
 // Update order (admin)
 export async function updateOrder(
   orderId: string,
-  data: {
-    userId?: string | null;
-    customerName?: string;
-    customerEmail?: string | null;
-    status?: string;
-    subtotal?: number;
-    tax?: number;
-    total?: number;
-  }
+  data: UpdateOrderInput
 ): Promise<Order> {
   const response = await fetch(`/api/orders/${orderId}`, {
     method: "PATCH",

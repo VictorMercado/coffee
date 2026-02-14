@@ -1,20 +1,24 @@
-export interface Tag {
-  id: string
-  name: string
-}
+import type { z } from "zod";
+import type { tagRequestSchema } from "@/lib/validations";
+import type { TagListDTO } from "@/lib/server/dtos";
 
-export interface CreateTagInput {
-  name: string
-  slug: string
-}
+// ── Re-export server DTO as client-friendly name ───────────────
+
+export type Tag = TagListDTO;
+
+// ── Input type derived from Zod schema ─────────────────────────
+
+export type CreateTagInput = z.infer<typeof tagRequestSchema>;
+
+// ── Fetchers ───────────────────────────────────────────────────
 
 // Fetch all tags
 export async function fetchTags(): Promise<Tag[]> {
-  const response = await fetch("/api/tags")
+  const response = await fetch("/api/tags");
   if (!response.ok) {
-    throw new Error("Failed to fetch tags")
+    throw new Error("Failed to fetch tags");
   }
-  return response.json()
+  return response.json();
 }
 
 // Create tag
@@ -23,24 +27,24 @@ export async function createTag(data: CreateTagInput): Promise<Tag> {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
-  })
+  });
 
   if (!response.ok) {
-    const errorData = await response.json()
-    throw new Error(errorData.error || "Failed to create tag")
+    const errorData = await response.json();
+    throw new Error(errorData.error || "Failed to create tag");
   }
 
-  return response.json()
+  return response.json();
 }
 
 // Delete tag
 export async function deleteTag(id: string): Promise<void> {
   const response = await fetch(`/api/tags/${id}`, {
     method: "DELETE",
-  })
+  });
 
   if (!response.ok) {
-    const errorData = await response.json()
-    throw new Error(errorData.error || "Failed to delete tag")
+    const errorData = await response.json();
+    throw new Error(errorData.error || "Failed to delete tag");
   }
 }

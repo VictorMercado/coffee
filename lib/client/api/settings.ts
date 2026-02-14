@@ -1,13 +1,18 @@
+import type { z } from "zod";
+import type { sizeRequestSchema } from "@/lib/validations";
 import type { Settings } from "@/lib/settings-store";
+import type { SizeListDTO, SizeDTO } from "@/lib/server/dtos";
 
-export interface Size {
-  id: string;
-  name: string;
-  abbreviation: string;
-  priceModifier: number;
-  isActive: boolean;
-  sortOrder: number;
-}
+// ── Re-export server DTOs as client-friendly names ─────────────
+
+export type Size = SizeListDTO;         // public API shape (simplified)
+export type SizeDetail = SizeDTO;       // admin/full shape
+
+// ── Input type derived from Zod schema ─────────────────────────
+
+export type CreateSizeInput = z.infer<typeof sizeRequestSchema>;
+
+// ── Fetchers ───────────────────────────────────────────────────
 
 // Fetch settings
 export async function fetchSettings(): Promise<Settings> {
@@ -61,13 +66,7 @@ export async function updateSizeStatus(
 }
 
 // Create a new size
-export async function createSize(data: {
-  name: string;
-  abbreviation: string;
-  priceModifier: number;
-  isActive?: boolean;
-  sortOrder?: number;
-}) {
+export async function createSize(data: CreateSizeInput) {
   const response = await fetch("/api/sizes", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -83,7 +82,7 @@ export async function createSize(data: {
 }
 
 // Fetch a single size
-export async function fetchSize(id: string): Promise<Size> {
+export async function fetchSize(id: string): Promise<SizeDetail> {
   const response = await fetch(`/api/sizes/${id}`);
   if (!response.ok) {
     throw new Error("Failed to fetch size");
@@ -94,14 +93,8 @@ export async function fetchSize(id: string): Promise<Size> {
 // Update a size
 export async function updateSize(
   id: string,
-  data: {
-    name?: string;
-    abbreviation?: string;
-    priceModifier?: number;
-    isActive?: boolean;
-    sortOrder?: number;
-  }
-): Promise<Size> {
+  data: Partial<CreateSizeInput>
+): Promise<SizeDetail> {
   const response = await fetch(`/api/sizes/${id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
