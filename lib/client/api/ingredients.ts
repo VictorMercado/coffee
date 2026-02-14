@@ -1,10 +1,4 @@
-export interface Ingredient {
-  id: string
-  name: string
-  description?: string | null
-  allergens?: string | null
-  isActive: boolean
-}
+import type { Ingredient } from "@/lib/types/ingredient";
 
 export interface CreateIngredientInput {
   name: string

@@ -1,5 +1,3 @@
-export interface TagDTO {
-  id: string;
-  name: string;
-  slug: string;
-}
+import type { Tag } from "@/lib/types/tag";
+
+export type TagDTO = Omit<Tag, "createdAt" | "updatedAt">;

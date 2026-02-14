@@ -1,11 +1,6 @@
-export interface CategoryDTO {
-  id: string;
-  name: string;
-  slug: string;
-  icon: string | null;
-  isActive: boolean;
-  sortOrder: number;
-}
+import type { Category } from "@/lib/types/category";
+
+export type CategoryDTO = Omit<Category, "createdAt" | "updatedAt">;
 
 export interface CategoryWithCountDTO extends CategoryDTO {
   menuItemCount: number;

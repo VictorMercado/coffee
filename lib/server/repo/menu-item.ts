@@ -154,54 +154,109 @@ export async function createMenuItem(data: CreateMenuItemData) {
 }
 
 export async function updateMenuItem(id: string, data: Partial<CreateMenuItemData>) {
-  // Delete existing relations before recreating
-  await prisma.menuItemSize.deleteMany({ where: { menuItemId: id } });
-  await prisma.menuItemTag.deleteMany({ where: { menuItemId: id } });
-  await prisma.menuItemIngredient.deleteMany({ where: { menuItemId: id } });
-  await prisma.recipeStep.deleteMany({ where: { menuItemId: id } });
+  // Fetch current menu item with all relations
+  const current = await prisma.menuItem.findUniqueOrThrow({
+    where: { id },
+    include: {
+      sizes: true,
+      tags: true,
+      ingredients: true,
+      recipeSteps: true,
+    },
+  });
+
+  const currentSizeIds = current.sizes.map((s) => s.sizeId).sort();
+  const currentTagIds = current.tags.map((t) => t.tagId).sort();
+  const currentIngredients = current.ingredients;
+  const currentSteps = current.recipeSteps;
+
+  // Helper to check if two sorted arrays are equal
+  const arraysEqual = (a: string[], b: string[]) =>
+    a.length === b.length && a.every((v, i) => v === b[i]);
+
+  // Build the update payload — only include relations that changed
+  const updateData: any = {
+    ...(data.name !== undefined && { name: data.name }),
+    ...(data.description !== undefined && { description: data.description }),
+    ...(data.basePrice !== undefined && { basePrice: data.basePrice }),
+    ...(data.categoryId !== undefined && { categoryId: data.categoryId }),
+    ...(data.imagePath !== undefined && { imagePath: data.imagePath }),
+    ...(data.isActive !== undefined && { isActive: data.isActive }),
+    ...(data.isFeatured !== undefined && { isFeatured: data.isFeatured }),
+    ...(data.sortOrder !== undefined && { sortOrder: data.sortOrder }),
+  };
+
+  // Sizes — only update if the set changed
+  if (data.sizeIds && !arraysEqual(currentSizeIds, [...data.sizeIds].sort())) {
+    updateData.sizes = {
+      deleteMany: {},
+      create: data.sizeIds.map((sizeId) => ({ sizeId })),
+    };
+  }
+
+  // Tags — only update if the set changed
+  if (data.tagIds && !arraysEqual(currentTagIds, [...data.tagIds].sort())) {
+    updateData.tags = {
+      deleteMany: {},
+      create: data.tagIds.map((tagId) => ({ tagId })),
+    };
+  }
+
+  // Ingredients — only update if anything changed
+  if (data.ingredients) {
+    const ingredientsChanged =
+      data.ingredients.length !== currentIngredients.length ||
+      data.ingredients.some((ing) => {
+        const existing = currentIngredients.find((c) => c.ingredientId === ing.ingredientId);
+        if (!existing) return true;
+        return existing.quantity !== ing.quantity || existing.isOptional !== ing.isOptional || existing.sortOrder !== ing.sortOrder;
+      });
+
+    if (ingredientsChanged) {
+      updateData.ingredients = {
+        deleteMany: {},
+        create: data.ingredients.map((ing) => ({
+          ingredientId: ing.ingredientId,
+          quantity: ing.quantity,
+          isOptional: ing.isOptional,
+          sortOrder: ing.sortOrder,
+        })),
+      };
+    }
+  }
+
+  // Recipe steps — only update if anything changed
+  if (data.recipeSteps) {
+    const stepsChanged =
+      data.recipeSteps.length !== currentSteps.length ||
+      data.recipeSteps.some((step) => {
+        const existing = currentSteps.find((c) => c.stepNumber === step.stepNumber);
+        if (!existing) return true;
+        return existing.instruction !== step.instruction || existing.duration !== step.duration || existing.temperature !== step.temperature;
+      });
+
+    if (stepsChanged) {
+      updateData.recipeSteps = {
+        deleteMany: {},
+        create: data.recipeSteps.map((step) => ({
+          stepNumber: step.stepNumber,
+          instruction: step.instruction,
+          duration: step.duration,
+          temperature: step.temperature,
+        })),
+      };
+    }
+  }
 
   return prisma.menuItem.update({
     where: { id },
-    data: {
-      ...(data.name && { name: data.name }),
-      ...(data.description && { description: data.description }),
-      ...(data.basePrice !== undefined && { basePrice: data.basePrice }),
-      ...(data.categoryId && { categoryId: data.categoryId }),
-      ...(data.imagePath !== undefined && { imagePath: data.imagePath }),
-      ...(data.isActive !== undefined && { isActive: data.isActive }),
-      ...(data.isFeatured !== undefined && { isFeatured: data.isFeatured }),
-      ...(data.sortOrder !== undefined && { sortOrder: data.sortOrder }),
-      ...(data.sizeIds && {
-        sizes: { create: data.sizeIds.map((sizeId) => ({ sizeId })) },
-      }),
-      ...(data.tagIds && {
-        tags: { create: data.tagIds.map((tagId) => ({ tagId })) },
-      }),
-      ...(data.ingredients && {
-        ingredients: {
-          create: data.ingredients.map((ing) => ({
-            ingredientId: ing.ingredientId,
-            quantity: ing.quantity,
-            isOptional: ing.isOptional,
-            sortOrder: ing.sortOrder,
-          })),
-        },
-      }),
-      ...(data.recipeSteps && {
-        recipeSteps: {
-          create: data.recipeSteps.map((step) => ({
-            stepNumber: step.stepNumber,
-            instruction: step.instruction,
-            duration: step.duration,
-            temperature: step.temperature,
-          })),
-        },
-      }),
-    },
+    data: updateData,
     include: {
       category: true,
       sizes: { include: { size: true } },
       tags: { include: { tag: true } },
+      ingredients: { include: { ingredient: true } },
+      recipeSteps: true,
     },
   });
 }

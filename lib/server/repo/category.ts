@@ -1,7 +1,16 @@
 import { prisma } from "@/lib/prisma";
-import type { CategoryDTO, CategoryWithCountDTO, CategoryBreakdownDTO } from "@/lib/server/dtos";
+import type { Category } from "@/lib/types/category";
 
-export async function findAllCategories(options?: { includeInactive?: boolean; }): Promise<CategoryWithCountDTO[]> {
+export interface CategoryWithCount extends Omit<Category, "createdAt" | "updatedAt"> {
+  menuItemCount: number;
+}
+
+export interface CategoryBreakdown {
+  name: string;
+  count: number;
+}
+
+export async function findAllCategories(options?: { includeInactive?: boolean; }): Promise<CategoryWithCount[]> {
   const categories = await prisma.category.findMany({
     where: options?.includeInactive ? {} : { isActive: true },
     orderBy: { sortOrder: "asc" },
@@ -21,7 +30,7 @@ export async function findAllCategories(options?: { includeInactive?: boolean; }
   }));
 }
 
-export async function findActiveCategories(): Promise<CategoryDTO[]> {
+export async function findActiveCategories(): Promise<Category[]> {
   return prisma.category.findMany({
     where: { isActive: true },
     orderBy: { sortOrder: "asc" },
@@ -87,7 +96,7 @@ export async function deleteCategory(id: string) {
   return prisma.category.delete({ where: { id } });
 }
 
-export async function findCategoriesWithCounts(): Promise<CategoryWithCountDTO[]> {
+export async function findCategoriesWithCounts(): Promise<CategoryWithCount[]> {
   const categories = await prisma.category.findMany({
     where: { isActive: true },
     include: { _count: { select: { menuItems: true } } },
@@ -105,7 +114,7 @@ export async function findCategoriesWithCounts(): Promise<CategoryWithCountDTO[]
   }));
 }
 
-export async function findCategoriesBreakdown(): Promise<CategoryBreakdownDTO[]> {
+export async function findCategoriesBreakdown(): Promise<CategoryBreakdown[]> {
   const categories = await prisma.category.findMany({
     where: { isActive: true },
     include: {

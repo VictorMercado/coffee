@@ -1,7 +1,3 @@
-export interface IngredientDTO {
-  id: string;
-  name: string;
-  description: string | null;
-  allergens: string | null;
-  isActive: boolean;
-}
+import type { Ingredient } from "@/lib/types/ingredient";
+
+export type IngredientDTO = Omit<Ingredient, "createdAt" | "updatedAt">;

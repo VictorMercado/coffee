@@ -1,6 +1,3 @@
-export interface UserDTO {
-  id: string;
-  username: string;
-  email: string | null;
-  role: string;
-}
+import type { User } from "@/lib/types/user";
+
+export type UserDTO = Omit<User, "password" | "createdAt" | "updatedAt">;

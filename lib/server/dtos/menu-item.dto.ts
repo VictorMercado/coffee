@@ -1,14 +1,6 @@
-export interface MenuItemDTO {
-  id: string;
-  name: string;
-  description: string;
-  basePrice: number;
-  categoryId: string;
-  imagePath: string | null;
-  isActive: boolean;
-  isFeatured: boolean;
-  sortOrder: number;
-}
+import type { MenuItem } from "@/lib/types/menu-item";
+
+export type MenuItemDTO = Omit<MenuItem, "createdAt" | "updatedAt">;
 
 export interface MenuItemSizeDTO {
   id: string;

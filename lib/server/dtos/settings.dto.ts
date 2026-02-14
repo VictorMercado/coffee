@@ -1,9 +1,3 @@
-export interface SettingsDTO {
-  id: string;
-  pricingEnabled: boolean;
-  storeName: string;
-  storeAddress: string;
-  storePhone: string;
-  taxRate: number;
-  prepTime: number;
-}
+import type { Settings } from "@/lib/types/settings";
+
+export type SettingsDTO = Omit<Settings, "updatedAt">;

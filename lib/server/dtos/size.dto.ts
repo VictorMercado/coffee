@@ -1,8 +1,3 @@
-export interface SizeDTO {
-  id: string;
-  name: string;
-  abbreviation: string;
-  priceModifier: number;
-  isActive: boolean;
-  sortOrder: number;
-}
+import type { Size } from "@/lib/types/size";
+
+export type SizeDTO = Omit<Size, "createdAt" | "updatedAt">;
