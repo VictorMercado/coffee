@@ -27,6 +27,7 @@ async function getMenuData() {
         name: s.size.name,
         abbreviation: s.size.abbreviation,
         priceModifier: s.size.priceModifier,
+        sortOrder: s.size.sortOrder,
       })),
       tags: item.tags.map((t) => t.tag.name),
     })),
