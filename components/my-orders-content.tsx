@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { CartDrawer } from "@/components/cart-drawer";
 import { useSettings } from "@/lib/settings-store";
@@ -73,6 +72,7 @@ export function MyOrdersContent({ user }: MyOrdersContentProps) {
   const { data: orders = [], isLoading: loading } = useQuery({
     queryKey: ["myOrders"],
     queryFn: fetchMyOrders,
+    refetchInterval: 30000,
   });
 
   const toggleOrderDetails = (orderId: string) => {
