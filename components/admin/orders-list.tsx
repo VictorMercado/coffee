@@ -117,7 +117,7 @@ export function OrdersList({ initialOrders }: OrdersListProps) {
 
   return (
     <>
-      <div className="p-8">
+      <div>
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
           <div className="border border-border bg-[#1A0F08] p-4">

@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import { AdminHeader } from "@/components/admin/admin-header";
 import { MenuItemForm } from "@/components/admin/forms/menu-item-form";
 import * as MenuItemRepo from "@/lib/server/repo/menu-item";
 import * as CategoryRepo from "@/lib/server/repo/category";
@@ -100,22 +99,16 @@ export default async function EditMenuItemPage({
   }
 
   return (
-    <>
-      <AdminHeader
-        title="EDIT MENU ITEM"
-        description={`Editing: ${data.menuItem.name}`}
+    <div className="container mx-auto">
+      <MenuItemForm
+        key={id}
+        menuItemId={id}
+        initialData={data.menuItem}
+        categories={data.categories}
+        sizes={data.sizes}
+        tags={data.tags}
+        ingredients={data.ingredients}
       />
-      <div className="container mx-auto p-8">
-        <MenuItemForm
-          key={id}
-          menuItemId={id}
-          initialData={data.menuItem}
-          categories={data.categories}
-          sizes={data.sizes}
-          tags={data.tags}
-          ingredients={data.ingredients}
-        />
-      </div>
-    </>
+    </div>
   );
 }

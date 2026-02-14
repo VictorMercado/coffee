@@ -9,10 +9,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { createSize, updateSize } from "@/lib/client/api";
-import { sizeSchema } from "@/lib/validations";
+import { sizeRequestSchema } from "@/lib/validations";
 import { toast } from "sonner";
 
-type SizeFormValues = z.infer<typeof sizeSchema>;
+type SizeFormValues = z.infer<typeof sizeRequestSchema>;
 
 interface SizeFormProps {
   sizeId?: string;
@@ -67,7 +67,7 @@ export function SizeForm({ sizeId, initialData }: SizeFormProps) {
         {/* Name */}
         <form.Field
           name="name"
-          validators={{ onChange: sizeSchema.shape.name }}
+          validators={{ onChange: sizeRequestSchema.shape.name }}
         >
           {(field) => (
             <div>
@@ -94,7 +94,7 @@ export function SizeForm({ sizeId, initialData }: SizeFormProps) {
         {/* Abbreviation */}
         <form.Field
           name="abbreviation"
-          validators={{ onChange: sizeSchema.shape.abbreviation }}
+          validators={{ onChange: sizeRequestSchema.shape.abbreviation }}
         >
           {(field) => (
             <div>
@@ -125,7 +125,7 @@ export function SizeForm({ sizeId, initialData }: SizeFormProps) {
         {/* Price Modifier */}
         <form.Field
           name="priceModifier"
-          validators={{ onChange: sizeSchema.shape.priceModifier }}
+          validators={{ onBlur: sizeRequestSchema.shape.priceModifier }}
         >
           {(field) => (
             <div>
@@ -137,9 +137,8 @@ export function SizeForm({ sizeId, initialData }: SizeFormProps) {
                 type="number"
                 step="0.25"
                 min="0"
-                value={field.state.value}
-                onChange={(e) => field.handleChange(parseFloat(e.target.value) || 0)}
-                onBlur={field.handleBlur}
+                defaultValue={field.state.value}
+                onBlur={(e) => field.handleBlur}
                 className="mt-1 border-border font-mono text-foreground"
               />
               <p className="mt-1 font-mono text-xs text-[#F5F5DC]/60">
@@ -157,7 +156,7 @@ export function SizeForm({ sizeId, initialData }: SizeFormProps) {
         {/* Sort Order */}
         <form.Field
           name="sortOrder"
-          validators={{ onChange: sizeSchema.shape.sortOrder._def.innerType }}
+          validators={{ onChange: sizeRequestSchema.shape.sortOrder._def.innerType }}
         >
           {(field) => (
             <div>

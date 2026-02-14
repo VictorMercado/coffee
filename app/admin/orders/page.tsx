@@ -33,12 +33,8 @@ export default async function AdminOrdersPage() {
   const orders = await getOrders();
 
   return (
-    <>
-      <AdminHeader
-        title="ORDERS"
-        description="Manage customer orders"
-      />
+    <div className="container mx-auto">
       <OrdersList initialOrders={orders} />
-    </>
+    </div>
   );
 }

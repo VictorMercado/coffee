@@ -1,4 +1,3 @@
-import { AdminHeader } from "@/components/admin/admin-header";
 import { CategoriesList } from "@/components/admin/categories-list";
 import * as CategoryRepo from "@/lib/server/repo/category";
 
@@ -13,12 +12,8 @@ export default async function CategoriesPage() {
   const categories = await getCategories();
 
   return (
-    <>
-      <AdminHeader
-        title="CATEGORIES"
-        description="Manage menu categories"
-      />
+    <div className="container mx-auto">
       <CategoriesList initialCategories={categories} />
-    </>
+    </div>
   );
 }

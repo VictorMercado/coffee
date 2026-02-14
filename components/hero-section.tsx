@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react"
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-[60vh] sm:min-h-[70vh] flex items-center justify-center border-b border-border overflow-hidden">
+    <section className="relative min-h-[70vh] flex items-center justify-center border-b border-border overflow-hidden">
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--primary)_1px,transparent_1px)] bg-size-[40px_40px]" />
@@ -47,7 +47,7 @@ export function HeroSection() {
       </div>
 
       {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+      <div className="absolute bottom-18 left-1/2 -translate-x-1/2 animate-bounce">
         <div className="w-6 h-10 border border-border rounded-full flex justify-center pt-2">
           <div className="w-1 h-2 bg-primary" />
         </div>

@@ -1,4 +1,3 @@
-import { AdminHeader } from "@/components/admin/admin-header";
 import { MenuItemsList } from "@/components/admin/menu-items-list";
 import * as MenuItemRepo from "@/lib/server/repo/menu-item";
 
@@ -23,12 +22,8 @@ export default async function AdminMenuItemsPage() {
   const menuItems = await getMenuItems();
 
   return (
-    <>
-      <AdminHeader
-        title="MENU ITEMS"
-        description="Manage coffee menu and pastries"
-      />
+    <div className="container mx-auto">
       <MenuItemsList initialItems={menuItems} />
-    </>
+    </div>
   );
 }

@@ -8,7 +8,9 @@ export default function AdminLayout({
 }) {
   return (
     <>
-      <AdminLayoutClient>{children}</AdminLayoutClient>
+      <AdminLayoutClient>
+        <main>{children}</main>
+      </AdminLayoutClient>
       <AiRecipeChat />
     </>
   );

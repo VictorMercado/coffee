@@ -12,7 +12,8 @@ import { Switch } from "@/components/ui/switch";
 import { useSettings as useSettingsStore } from "@/lib/settings-store";
 import { fetchSettings, updateSettings } from "@/lib/client/api";
 import type { Settings } from "@/lib/settings-store";
-import { Store, DollarSign, Clock, Loader2 } from "lucide-react";
+import { Store, DollarSign, Clock, Loader2, Shield } from "lucide-react";
+import { signOut } from "next-auth/react";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -73,13 +74,9 @@ export default function SettingsPage() {
   }
 
   return (
-    <>
-      <AdminHeader
-        title="SETTINGS"
-        description="Configure application settings"
-      />
-      <div className="p-8 space-y-6">
-        {/* Pricing Settings */}
+    <div className="container mx-auto space-y-6">
+      {/* Pricing Settings */}
+      <div className="space-y-6">
         <div className="border border-border bg-card p-6 space-y-4">
           <div className="flex items-center gap-3 mb-4">
             <DollarSign className="w-5 h-5 text-primary" />
@@ -240,6 +237,20 @@ export default function SettingsPage() {
           </Button>
         </div>
       </div>
-    </>
+      <div className="bg-card p-2 space-y-4">
+        <div className="flex items-center gap-3 mb-4">
+          <Shield className="w-5 h-5 text-primary" />
+          <h2 className="font-mono text-lg text-primary">Log Out</h2>
+        </div>
+        <div className="flex justify-end">
+          <Button
+            onClick={() => signOut()}
+            className="bg-primary font-mono text-background hover:bg-primary/80"
+          >
+            LOG OUT
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }

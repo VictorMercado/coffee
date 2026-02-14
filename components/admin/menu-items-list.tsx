@@ -43,8 +43,8 @@ export function MenuItemsList({ initialItems }: MenuItemsListProps) {
   }
 
   return (
-    <div className="p-8">
-      <div className="mb-6 flex items-center justify-end">
+    <div className="space-y-4">
+      <div className="flex items-center justify-end">
         <Button
           onClick={() => router.push("/admin/menu-items/new")}
           className="bg-primary font-mono text-background hover:bg-primary/80"

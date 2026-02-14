@@ -46,8 +46,8 @@ export function CategoriesList({ initialCategories }: CategoriesListProps) {
   }
 
   return (
-    <div className="p-8">
-      <div className="mb-6 flex items-center justify-end">
+    <div className="space-y-4">
+      <div className="flex items-center justify-end">
         <Button
           onClick={() => router.push("/admin/categories/new")}
           className="bg-primary font-mono text-background hover:bg-primary/80"
@@ -58,7 +58,7 @@ export function CategoriesList({ initialCategories }: CategoriesListProps) {
       </div>
 
       {/* Table */}
-      <div className="border border-border bg-background overflow-x-auto">
+      <div className="border border-border bg-card overflow-x-auto">
         <table className="w-full min-w-[800px]">
           <thead>
             <tr className="border-b border-border">

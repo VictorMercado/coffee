@@ -7,5 +7,9 @@ export const revalidate = 0;
 export default async function SizesPage() {
   const sizes = await SizeRepo.findAllSizesWithCounts();
 
-  return <SizesList sizes={sizes} />;
+  return (
+    <div className="container mx-auto">
+      <SizesList sizes={sizes} />
+    </div>
+  );
 }

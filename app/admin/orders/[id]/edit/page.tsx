@@ -2,7 +2,6 @@
 
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { AdminHeader } from "@/components/admin/admin-header";
 import { OrderForm } from "@/components/admin/forms/order-form";
 import { fetchOrder } from "@/lib/client/api";
 
@@ -19,7 +18,6 @@ export default function EditOrderPage() {
   if (isLoading) {
     return (
       <>
-        <AdminHeader title="EDIT ORDER" description="Loading..." />
         <div className="flex items-center justify-center p-12">
           <div className="font-mono text-primary">LOADING...</div>
         </div>
@@ -30,7 +28,6 @@ export default function EditOrderPage() {
   if (isError || !order) {
     return (
       <>
-        <AdminHeader title="EDIT ORDER" description="Order not found" />
         <div className="flex items-center justify-center p-12">
           <div className="font-mono text-red-500">ORDER NOT FOUND</div>
         </div>
@@ -39,17 +36,11 @@ export default function EditOrderPage() {
   }
 
   return (
-    <>
-      <AdminHeader
-        title="EDIT ORDER"
-        description={`Editing: ${order.orderNumber}`}
+    <div className="container mx-auto">
+      <OrderForm
+        orderId={orderId}
+        initialData={order}
       />
-      <div className="p-8">
-        <OrderForm
-          orderId={orderId}
-          initialData={order}
-        />
-      </div>
-    </>
+    </div>
   );
 }

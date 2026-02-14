@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import { AdminHeader } from "@/components/admin/admin-header";
 import { CategoryForm } from "@/components/admin/forms/category-form";
 import * as CategoryRepo from "@/lib/server/repo/category";
 
@@ -37,14 +36,8 @@ export default async function EditCategoryPage({
   }
 
   return (
-    <>
-      <AdminHeader
-        title="EDIT CATEGORY"
-        description="Update category details"
-      />
-      <div className="p-8">
-        <CategoryForm category={category} />
-      </div>
-    </>
+    <div className="container mx-auto">
+      <CategoryForm category={category} />
+    </div>
   );
 }

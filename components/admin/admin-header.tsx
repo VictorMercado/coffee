@@ -1,9 +1,3 @@
-"use client"
-
-import { signOut } from "next-auth/react"
-import { Button } from "@/components/ui/button"
-import { LogOut } from "lucide-react"
-
 interface AdminHeaderProps {
   title: string
   description?: string
@@ -21,15 +15,6 @@ export function AdminHeader({ title, description }: AdminHeaderProps) {
             </p>
           )}
         </div>
-        <Button
-          onClick={() => signOut({ callbackUrl: "/" })}
-          variant="outline"
-          size="sm"
-          className="w-full sm:w-auto"
-        >
-          <LogOut className="mr-2 h-4 w-4" />
-          LOGOUT
-        </Button>
       </div>
     </div>
   )

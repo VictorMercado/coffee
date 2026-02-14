@@ -1,27 +1,41 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { useSession } from "next-auth/react"
-import { Header } from "@/components/header"
-import { HeroSection } from "@/components/hero-section"
-import { MenuItemCard } from "@/components/menu-item-card"
-import { CartDrawer } from "@/components/cart-drawer"
-import { Footer } from "@/components/footer"
-import { Button } from "@/components/ui/button"
-import { MenuItem } from "@/lib/client/api/menu-items"
-import { ArrowRight, UserPlus, X } from "lucide-react"
+import { useState } from "react";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useQuery } from "@tanstack/react-query";
+import { Header } from "@/components/header";
+import { HeroSection } from "@/components/hero-section";
+import { MenuItemCard } from "@/components/menu-item-card";
+import { CartDrawer } from "@/components/cart-drawer";
+import { Footer } from "@/components/footer";
+import { Button } from "@/components/ui/button";
+import { MenuItem } from "@/lib/client/api/menu-items";
+import { fetchMyOrders } from "@/lib/client/api/orders";
+import { ArrowRight, UserPlus, X, Coffee } from "lucide-react";
 
 interface HomeContentProps {
-  featuredItems: MenuItem[]
+  featuredItems: MenuItem[];
 }
 
 export function HomeContent({ featuredItems }: HomeContentProps) {
-  const [isCartOpen, setIsCartOpen] = useState(false)
-  const [guestBannerDismissed, setGuestBannerDismissed] = useState(false)
-  const { data: session } = useSession()
-  const isGuest = session?.user?.username === "guest"
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [guestBannerDismissed, setGuestBannerDismissed] = useState(false);
+  const { data: session } = useSession();
+  const isGuest = session?.user?.username === "guest";
+  const isLoggedIn = !!session?.user && !isGuest;
 
+  const { data: orders } = useQuery({
+    queryKey: ["my-orders"],
+    queryFn: fetchMyOrders,
+    enabled: isLoggedIn,
+    refetchInterval: 30000, // poll every 30s
+  });
+
+  const pendingOrders = orders?.filter(
+    (o) => o.status === "PENDING" || o.status === "PREPARING"
+  );
+  const pendingOrdersReversed = pendingOrders?.reverse();
   return (
     <div className="min-h-screen bg-background">
       <Header onCartClick={() => setIsCartOpen(true)} />
@@ -57,6 +71,26 @@ export function HomeContent({ featuredItems }: HomeContentProps) {
 
       <main className={`${isGuest && !guestBannerDismissed ? "pt-[120px] sm:pt-[132px]" : "pt-16 sm:pt-20"}`}>
         <HeroSection />
+
+        <div className="overflow-x-auto -mt-12 mb-4 relative z-10 px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-2 flex-nowrap w-fit mx-auto pb-2">
+            {pendingOrdersReversed && pendingOrdersReversed.length > 0 && pendingOrdersReversed.map((order) => (
+              <Link
+                key={order.id}
+                href={`/order-confirmation/${order.id}`}
+                className="inline-flex items-center gap-2 bg-primary/10 border border-primary rounded-full px-4 py-2 font-mono text-xs text-primary hover:bg-primary/20 transition-colors whitespace-nowrap shrink-0"
+              >
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary" />
+                </span>
+                <Coffee className="w-4 h-4" />
+                #{order.orderNumber}
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            ))}
+          </div>
+        </div>
 
         {/* Featured Items Preview */}
         <section id="menu" className="py-12 sm:py-16">
@@ -108,5 +142,6 @@ export function HomeContent({ featuredItems }: HomeContentProps) {
       {/* Cart Drawer */}
       <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </div>
-  )
+  );
 }
+

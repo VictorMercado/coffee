@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
@@ -38,6 +38,16 @@ export function OrderConfirmationContent({ order }: OrderConfirmationContentProp
   const { settings } = useSettings();
 
   const pricingEnabled = settings?.pricingEnabled ?? true;
+  const prepTime = settings?.prepTime ?? 15;
+
+  const estimatedReadyTime = useMemo(() => {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + prepTime);
+    return now.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  }, [prepTime]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -80,6 +90,11 @@ export function OrderConfirmationContent({ order }: OrderConfirmationContentProp
               </div>
               <div className="font-mono text-xs text-muted-foreground mt-2">
                 {formatDate(order.createdAt)}
+              </div>
+              <div className="mt-3 font-mono text-sm text-muted-foreground">
+                Estimated ready by{" "}
+                <span className="text-primary font-bold">{estimatedReadyTime}</span>
+                <span className="text-xs text-muted-foreground ml-1">({prepTime} min)</span>
               </div>
             </div>
           </div>
@@ -168,7 +183,7 @@ export function OrderConfirmationContent({ order }: OrderConfirmationContentProp
                   <span className="text-primary">FREE</span>
                 </div>
                 <p className="text-xs text-muted-foreground mt-2 text-right">
-                  No charge for household orders
+                  Wow you must be special!!
                 </p>
               </div>
             )}
@@ -184,9 +199,6 @@ export function OrderConfirmationContent({ order }: OrderConfirmationContentProp
                   Orbit Coffee<br />
                   123 Space Station Blvd<br />
                   Lunar Colony, Moon 90210
-                </div>
-                <div className="mt-3 text-xs text-muted-foreground">
-                  Your order will be ready in approximately 15-20 minutes
                 </div>
               </div>
             </div>

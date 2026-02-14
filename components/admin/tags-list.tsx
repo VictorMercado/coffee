@@ -84,8 +84,8 @@ export function TagsList({ initialTags }: TagsListProps) {
 
   return (
     <>
-      <div className="p-8">
-        <div className="mb-6 flex items-center justify-end">
+      <div className="space-y-4">
+        <div className="flex items-center justify-end">
           <Button
             onClick={() => setCreateDialogOpen(true)}
             className="bg-primary font-mono text-background hover:bg-primary/80"

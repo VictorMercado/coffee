@@ -1,4 +1,3 @@
-import { AdminHeader } from "@/components/admin/admin-header";
 import { MenuItemForm } from "@/components/admin/forms/menu-item-form";
 import * as CategoryRepo from "@/lib/server/repo/category";
 import * as SizeRepo from "@/lib/server/repo/size";
@@ -44,19 +43,13 @@ export default async function NewMenuItemPage() {
   const data = await getFormData();
 
   return (
-    <>
-      <AdminHeader
-        title="CREATE MENU ITEM"
-        description="Add a new item to the menu"
+    <div className="container mx-auto">
+      <MenuItemForm
+        categories={data.categories}
+        sizes={data.sizes}
+        tags={data.tags}
+        ingredients={data.ingredients}
       />
-      <div className="container mx-auto p-8">
-        <MenuItemForm
-          categories={data.categories}
-          sizes={data.sizes}
-          tags={data.tags}
-          ingredients={data.ingredients}
-        />
-      </div>
-    </>
+    </div>
   );
 }
