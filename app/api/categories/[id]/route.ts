@@ -1,15 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/server/auth";
-import { z } from "zod";
+import { categoryRequestSchema } from "@/lib/validations";
 import * as CategoryRepo from "@/lib/server/repo/category";
-
-const categorySchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  slug: z.string().min(1, "Slug is required").regex(/^[a-z0-9-]+$/, "Slug must be lowercase letters, numbers, and hyphens only"),
-  icon: z.string().optional().nullable(),
-  isActive: z.boolean().default(true),
-  sortOrder: z.number().int().min(0).default(0),
-});
 
 export async function GET(
   request: NextRequest,
@@ -57,7 +49,7 @@ export async function PATCH(
 
     const { id } = await params;
     const body = await request.json();
-    const validationResult = categorySchema.safeParse(body);
+    const validationResult = categoryRequestSchema.safeParse(body);
 
     if (!validationResult.success) {
       return NextResponse.json(

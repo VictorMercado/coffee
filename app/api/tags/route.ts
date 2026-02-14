@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkAdminAuth } from "@/lib/server/auth-helper";
-import { tagSchema } from "@/lib/validations";
+import { tagRequestSchema } from "@/lib/validations";
 import * as TagRepo from "@/lib/server/repo/tag";
 
 export async function GET() {
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const validatedData = tagSchema.parse(body);
+    const validatedData = tagRequestSchema.parse(body);
 
     const tag = await TagRepo.createTag(validatedData);
 

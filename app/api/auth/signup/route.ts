@@ -1,23 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as bcrypt from "bcryptjs";
-import { z } from "zod";
+import { signupRequestSchema } from "@/lib/validations";
 import * as UserRepo from "@/lib/server/repo/user";
-
-const signupSchema = z.object({
-  username: z
-    .string()
-    .min(3, "Username must be at least 3 characters")
-    .max(20, "Username must be less than 20 characters")
-    .regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
     // Validate input
-    const validationResult = signupSchema.safeParse(body);
+    const validationResult = signupRequestSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
         { error: validationResult.error.errors[0].message },

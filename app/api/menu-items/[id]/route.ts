@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkAdminAuth } from "@/lib/server/auth-helper";
-import { menuItemSchema } from "@/lib/validations";
+import { menuItemRequestSchema } from "@/lib/validations";
 import * as MenuItemRepo from "@/lib/server/repo/menu-item";
 
 export async function GET(
@@ -80,7 +80,7 @@ export async function PATCH(
   try {
     const { id } = await params;
     const body = await request.json();
-    const validatedData = menuItemSchema.partial().parse(body);
+    const validatedData = menuItemRequestSchema.partial().parse(body);
 
     const menuItem = await MenuItemRepo.updateMenuItem(id, validatedData);
 

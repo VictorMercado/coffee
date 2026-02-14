@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/server/auth";
-import { z } from "zod";
+import { orderStatusRequestSchema } from "@/lib/validations";
 import * as OrderRepo from "@/lib/server/repo/order";
-
-const statusSchema = z.object({
-  status: z.enum(["PENDING", "PREPARING", "READY", "COMPLETED", "CANCELLED"]),
-});
 
 export async function PATCH(
   request: NextRequest,
@@ -19,7 +15,7 @@ export async function PATCH(
 
     const { id } = await params;
     const body = await request.json();
-    const validationResult = statusSchema.safeParse(body);
+    const validationResult = orderStatusRequestSchema.safeParse(body);
 
     if (!validationResult.success) {
       return NextResponse.json(

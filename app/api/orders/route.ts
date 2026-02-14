@@ -1,28 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/server/auth";
-import { z } from "zod";
+import { orderRequestSchema } from "@/lib/validations";
 import * as OrderRepo from "@/lib/server/repo/order";
 import * as MenuItemRepo from "@/lib/server/repo/menu-item";
-
-const orderItemSchema = z.object({
-  menuItemId: z.string(),
-  quantity: z.number().int().positive(),
-  size: z.string(),
-  price: z.number().positive(),
-});
-
-const orderSchema = z.object({
-  customerName: z.string().min(1, "Name is required"),
-  customerEmail: z.string().email().optional().nullable(),
-  items: z.array(orderItemSchema).min(1, "Order must have at least one item"),
-  total: z.number().positive(),
-});
 
 export async function POST(request: NextRequest) {
   try {
     const session = await auth();
     const body = await request.json();
-    const validationResult = orderSchema.safeParse(body);
+    const validationResult = orderRequestSchema.safeParse(body);
 
     if (!validationResult.success) {
       return NextResponse.json(

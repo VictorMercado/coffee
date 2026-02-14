@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/server/auth";
-import { sizeSchema } from "@/lib/validations";
+import { sizeRequestSchema } from "@/lib/validations";
 import * as SizeRepo from "@/lib/server/repo/size";
 
 export async function GET() {
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const validationResult = sizeSchema.safeParse(body);
+    const validationResult = sizeRequestSchema.safeParse(body);
 
     if (!validationResult.success) {
       return NextResponse.json(

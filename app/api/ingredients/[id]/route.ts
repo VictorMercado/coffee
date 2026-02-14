@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkAdminAuth } from "@/lib/server/auth-helper";
-import { ingredientSchema } from "@/lib/validations";
+import { ingredientRequestSchema } from "@/lib/validations";
 import * as IngredientRepo from "@/lib/server/repo/ingredient";
 
 export async function GET(
@@ -40,7 +40,7 @@ export async function PATCH(
   try {
     const { id } = await params;
     const body = await request.json();
-    const validatedData = ingredientSchema.partial().parse(body);
+    const validatedData = ingredientRequestSchema.partial().parse(body);
 
     const ingredient = await IngredientRepo.updateIngredient(id, validatedData);
 

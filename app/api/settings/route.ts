@@ -1,16 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/server/auth";
-import { z } from "zod";
+import { settingsRequestSchema } from "@/lib/validations";
 import * as SettingsRepo from "@/lib/server/repo/settings";
-
-const settingsSchema = z.object({
-  pricingEnabled: z.boolean(),
-  storeName: z.string().min(1),
-  storeAddress: z.string().min(1),
-  storePhone: z.string().min(1),
-  taxRate: z.number().min(0).max(100),
-  prepTime: z.number().int().min(1),
-});
 
 export async function GET(request: NextRequest) {
   try {
@@ -33,7 +24,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json();
-    const validationResult = settingsSchema.safeParse(body);
+    const validationResult = settingsRequestSchema.safeParse(body);
 
     if (!validationResult.success) {
       return NextResponse.json(

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/server/auth";
-import { sizeSchema } from "@/lib/validations";
+import { sizeRequestSchema } from "@/lib/validations";
 import * as SizeRepo from "@/lib/server/repo/size";
 
 export async function GET(
@@ -41,7 +41,7 @@ export async function PATCH(
     }
 
     const body = await request.json();
-    const validatedData = sizeSchema.partial().parse(body);
+    const validatedData = sizeRequestSchema.partial().parse(body);
 
     const size = await SizeRepo.updateSize(id, validatedData);
 
