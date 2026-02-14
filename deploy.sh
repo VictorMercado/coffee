@@ -1,7 +1,7 @@
 #!/bin/bash
 # Orbit Coffee Deploy Script
 # Usage: ./deploy.sh [--no-cache]
-LOG_FILE="/etc/webhook_timestamp.log"
+LOG_FILE="/etc/coffee/deploy.log"
 ENV_FILE="/etc/coffee/.env"
 
 
@@ -11,7 +11,7 @@ if [ ! -f "$LOG_FILE" ]; then
 else
     echo "LOG File already exists."
 fi
-echo "$(date) - Deployment started" >> /etc/webhook_timestamp.log
+echo "$(date) - Deployment started" >> $LOG_FILE
 set -e
 
 # Ensure we have the full path for binaries (helps with Webhook environments)
@@ -51,7 +51,7 @@ echo -e "${YELLOW}🧹 Cleaning up old images...${NC}"
 docker image prune -f
 
 # Log deployment timestamp
-echo "$(date) - Deployment complete" >> /etc/webhook_timestamp.log
+echo "$(date) - Deployment complete" >> $LOG_FILE
 
 echo -e "${GREEN}✅ Deployment complete!${NC}"
 docker compose ps
