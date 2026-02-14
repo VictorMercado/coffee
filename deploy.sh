@@ -1,6 +1,16 @@
 #!/bin/bash
 # Orbit Coffee Deploy Script
 # Usage: ./deploy.sh [--no-cache]
+LOG_FILE="/etc/webhook_timestamp.log"
+ENV_FILE="/etc/coffee/.env"
+
+
+if [ ! -f "$LOG_FILE" ]; then
+    touch "$LOG_FILE"
+    echo "Created: $LOG_FILE"
+else
+    echo "LOG File already exists."
+fi
 echo "$(date) - Deployment started" >> /etc/webhook_timestamp.log
 set -e
 
@@ -16,12 +26,12 @@ PARENT_PATH=$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)
 cd "$PARENT_PATH"
 
 # 2. Verify env file exists at /etc/coffee/.env
-if [ ! -f "/etc/coffee/.env" ]; then
-    echo -e "${YELLOW}⚠️  No .env file found at /etc/coffee/.env${NC}"
-    echo "$(date) - Deployment failed: No .env file found at /etc/coffee/.env" >> /etc/webhook_timestamp.log
+if [ ! -f "$ENV_FILE" ]; then
+    echo -e "${YELLOW}⚠️  No .env file found at $ENV_FILE${NC}"
+    echo "$(date) - Deployment failed: No .env file found at $ENV_FILE" >> $LOG_FILE
     exit 1
 fi
-echo -e "${GREEN}✅ Env file found at /etc/coffee/.env${NC}"
+echo -e "${GREEN}✅ Env file found at $ENV_FILE${NC}"
 
 echo -e "${GREEN}🚀 Starting Orbit Coffee deployment in $PARENT_PATH...${NC}"
 
