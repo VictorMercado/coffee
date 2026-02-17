@@ -11,7 +11,8 @@
     {
       "src": "/icon-1024x1024.png",
       "sizes": "1024x1024",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "/icon-light-32x32.png",
