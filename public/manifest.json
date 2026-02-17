@@ -41,5 +41,40 @@
       "sizes": "any",
       "type": "image/svg+xml"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "Menu",
+      "short_name": "Menu",
+      "url": "/menu",
+      "icons": [
+        {
+          "src": "/icon-1024x1024.png",
+          "sizes": "1024x1024"
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "short_name": "Orders",
+      "url": "/orders",
+      "icons": [
+        {
+          "src": "/icon-1024x1024.png",
+          "sizes": "1024x1024"
+        }
+      ]
+    },
+    {
+      "name": "Add new Drink",
+      "short_name": "Admin",
+      "url": "/admin",
+      "icons": [
+        {
+          "src": "/icon-1024x1024.png",
+          "sizes": "1024x1024"
+        }
+      ]
+    }
   ]
 }
