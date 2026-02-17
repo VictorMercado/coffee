@@ -84,10 +84,10 @@ export function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                       </div>
 
                       {/* Details */}
-                      <div className="flex-1 min-w-0">
+                      <div className="flex-1">
                         <div className="flex items-start justify-between gap-2">
-                          <div>
-                            <h4 className="font-mono text-foreground text-sm tracking-wider uppercase truncate">
+                          <div className="max-w-full">
+                            <h4 className="flex font-mono text-foreground text-wrap text-sm tracking-wider uppercase truncate">
                               {item.name}
                             </h4>
                             <p className="font-mono text-muted-foreground text-xs">

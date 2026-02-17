@@ -40,9 +40,7 @@ export function Header({ onCartClick }: { onCartClick: () => void; }) {
           <nav className="hidden md:flex items-center gap-8">
             <NavLink href="/" active={pathname === "/"}>HOME</NavLink>
             <NavLink href="/menu" active={pathname === "/menu"}>MENU</NavLink>
-            {session && (
-              <NavLink href="/orders" active={pathname === "/orders"}>ORDERS</NavLink>
-            )}
+            <NavLink href="/orders" active={pathname === "/orders"}>ORDERS</NavLink>
           </nav>
 
           {/* Actions */}
@@ -107,9 +105,7 @@ export function Header({ onCartClick }: { onCartClick: () => void; }) {
           <nav className="md:hidden py-4 border-t border-border flex flex-col gap-4">
             <NavLink href="/" active={pathname === "/"} mobile>HOME</NavLink>
             <NavLink href="/menu" active={pathname === "/menu"} mobile>MENU</NavLink>
-            {session && !isGuest && (
-              <NavLink href="/orders" active={pathname === "/orders"} mobile>ORDERS</NavLink>
-            )}
+            <NavLink href="/orders" active={pathname === "/orders"} mobile>ORDERS</NavLink>
           </nav>
         )}
       </div>
