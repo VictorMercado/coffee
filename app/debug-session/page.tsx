@@ -24,7 +24,7 @@ export default function DebugSessionPage() {
 
           <div>
             <strong className="font-mono text-primary">Session:</strong>
-            <pre className="mt-2 bg-[#1A0F08] p-4 overflow-auto text-xs">
+            <pre className="mt-2 bg-card p-4 overflow-auto text-xs">
               {JSON.stringify(session, null, 2)}
             </pre>
           </div>

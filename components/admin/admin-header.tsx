@@ -1,11 +1,11 @@
 interface AdminHeaderProps {
-  title: string
-  description?: string
+  title: string;
+  description?: string;
 }
 
 export function AdminHeader({ title, description }: AdminHeaderProps) {
   return (
-    <div className="border-b border-border bg-[#1A0F08] px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+    <div className="border-b border-border bg-card px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="font-mono text-xl sm:text-2xl text-primary">{title}</h1>
@@ -17,5 +17,5 @@ export function AdminHeader({ title, description }: AdminHeaderProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

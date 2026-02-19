@@ -84,7 +84,7 @@ export default async function AdminDashboard() {
           </div>
 
           {/* Active Items */}
-          <div className="border border-border bg-[#1A0F08] p-6">
+          <div className="border border-border bg-card p-6">
             <div className="flex items-center justify-between mb-2">
               <span className="font-mono text-xs text-primary tracking-wider">
                 ACTIVE
@@ -100,7 +100,7 @@ export default async function AdminDashboard() {
           </div>
 
           {/* Inactive Items */}
-          <div className="border border-border bg-[#1A0F08] p-6">
+          <div className="border border-border bg-card p-6">
             <div className="flex items-center justify-between mb-2">
               <span className="font-mono text-xs text-primary tracking-wider">
                 INACTIVE
@@ -116,7 +116,7 @@ export default async function AdminDashboard() {
           </div>
 
           {/* Featured Items */}
-          <div className="border border-border bg-[#1A0F08] p-6">
+          <div className="border border-border bg-card p-6">
             <div className="flex items-center justify-between mb-2">
               <span className="font-mono text-xs text-primary tracking-wider">
                 FEATURED
@@ -133,7 +133,7 @@ export default async function AdminDashboard() {
         </div>
 
         {/* Categories Overview */}
-        <div className="border border-border bg-[#1A0F08] p-6">
+        <div className="border border-border bg-card p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="font-mono text-lg text-primary">
               CATEGORIES BREAKDOWN
@@ -165,7 +165,7 @@ export default async function AdminDashboard() {
         </div>
 
         {/* Recent Items */}
-        <div className="border border-border bg-[#1A0F08] p-6">
+        <div className="border border-border bg-card p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="font-mono text-lg text-primary">
               RECENTLY ADDED

@@ -82,7 +82,7 @@ export function IngredientSelector({
         return (
           <div
             key={selectedIng.ingredientId}
-            className="flex items-start gap-4 border border-[#FF6B35] bg-[#1A0F08] p-4"
+            className="flex items-start gap-4 border border-[#FF6B35] bg-card p-4"
           >
             <div className="flex-1 space-y-3">
               <div className="font-mono text-sm text-[#D4AF37]">
@@ -147,7 +147,7 @@ export function IngredientSelector({
         </Button>
 
         {showDropdown && availableToAdd.length > 0 && (
-          <div className="absolute z-10 mt-2 max-h-60 w-full overflow-y-auto border border-[#FF6B35] bg-[#1A0F08]">
+          <div className="absolute z-10 mt-2 max-h-60 w-full overflow-y-auto border border-[#FF6B35] bg-card">
             {availableToAdd.map((ingredient) => (
               <button
                 key={ingredient.id}
@@ -161,7 +161,7 @@ export function IngredientSelector({
           </div>
         )}
         {showDropdown && availableToAdd.length === 0 && (
-          <div className="absolute z-10 mt-2 w-full border border-[#FF6B35] bg-[#1A0F08] px-4 py-3 font-mono text-sm text-[#F5F5DC]/60">
+          <div className="absolute z-10 mt-2 w-full border border-[#FF6B35] bg-card px-4 py-3 font-mono text-sm text-[#F5F5DC]/60">
             {ingredients.length === 0
               ? "No ingredients found. Add ingredients in the Ingredients section first."
               : "All ingredients have been added."}

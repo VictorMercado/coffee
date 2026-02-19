@@ -73,7 +73,7 @@ export function RecipeStepsEditor({ steps, onChange }: RecipeStepsEditorProps) {
       {steps.map((step, index) => (
         <div
           key={index}
-          className="space-y-3 border border-[#FF6B35] bg-[#1A0F08] p-4"
+          className="space-y-3 border border-[#FF6B35] bg-card p-4"
         >
           <div className="flex items-center justify-between">
             <span className="font-mono text-sm text-[#D4AF37]">

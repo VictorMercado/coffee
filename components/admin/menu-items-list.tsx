@@ -55,7 +55,7 @@ export function MenuItemsList({ initialItems }: MenuItemsListProps) {
       </div>
 
       {/* Table */}
-      <div className="border border-border bg-[#1A0F08] overflow-x-auto">
+      <div className="border border-border bg-card overflow-x-auto">
         <table className="w-full min-w-[700px]">
           <thead>
             <tr className="border-b border-border">

@@ -120,23 +120,23 @@ export function OrdersList({ initialOrders }: OrdersListProps) {
       <div>
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
-          <div className="border border-border bg-[#1A0F08] p-4">
+          <div className="border border-border bg-card p-4">
             <div className="font-mono text-xs text-muted-foreground mb-1">TOTAL ORDERS</div>
             <div className="font-mono text-2xl text-primary">{orders.length}</div>
           </div>
-          <div className="border border-border bg-[#1A0F08] p-4">
+          <div className="border border-border bg-card p-4">
             <div className="font-mono text-xs text-muted-foreground mb-1">PENDING</div>
             <div className="font-mono text-2xl text-yellow-500">
               {orders.filter(o => o.status === "PENDING").length}
             </div>
           </div>
-          <div className="border border-border bg-[#1A0F08] p-4">
+          <div className="border border-border bg-card p-4">
             <div className="font-mono text-xs text-muted-foreground mb-1">PREPARING</div>
             <div className="font-mono text-2xl text-blue-500">
               {orders.filter(o => o.status === "PREPARING").length}
             </div>
           </div>
-          <div className="border border-border bg-[#1A0F08] p-4">
+          <div className="border border-border bg-card p-4">
             <div className="font-mono text-xs text-muted-foreground mb-1">READY</div>
             <div className="font-mono text-2xl text-green-500">
               {orders.filter(o => o.status === "READY").length}
@@ -145,7 +145,7 @@ export function OrdersList({ initialOrders }: OrdersListProps) {
         </div>
 
         {/* Orders Table */}
-        <div className="border border-border bg-[#1A0F08] overflow-x-auto">
+        <div className="border border-border bg-card overflow-x-auto">
           <table className="w-full min-w-[900px]">
             <thead>
               <tr className="border-b border-border">

@@ -43,7 +43,7 @@ export default function IngredientsPage() {
         </Button>
       </div>
 
-      <div className="border border-border bg-[#1A0F08] overflow-x-auto">
+      <div className="border border-border bg-card overflow-x-auto">
         {isLoading ? (
           <div className="p-12 text-center font-mono text-primary">
             LOADING...

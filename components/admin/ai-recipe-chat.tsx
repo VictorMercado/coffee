@@ -45,7 +45,7 @@ export function AiRecipeChat() {
 
       {/* Chat panel */}
       {isOpen && (
-        <div className="fixed bottom-24 right-4 sm:right-6 z-50 flex h-[500px] w-[calc(100vw-2rem)] sm:w-[400px] max-w-[400px] flex-col border border-[#FF6B35]/30 bg-[#1A0F08] shadow-2xl">
+        <div className="fixed bottom-24 right-4 sm:right-6 z-50 flex h-[500px] w-[calc(100vw-2rem)] sm:w-[400px] max-w-[400px] flex-col border border-[#FF6B35]/30 bg-card shadow-2xl">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-[#FF6B35]/30 px-4 py-3">
             <div className="flex items-center gap-2">

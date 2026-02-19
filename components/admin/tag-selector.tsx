@@ -45,7 +45,7 @@ export function TagSelector({ selectedTagIds, onChange, availableTags: allTags }
 
   const handleCreateTag = () => {
     if (!newTagName.trim()) return
-    mutation.mutate({ name: newTagName })
+    mutation.mutate({ name: newTagName, slug: newTagName.toLowerCase().replace(/\s+/g, "-") })
   }
 
   const toggleTag = (tagId: string) => {
@@ -66,7 +66,7 @@ export function TagSelector({ selectedTagIds, onChange, availableTags: allTags }
           {selectedTags.map((tag) => (
             <span
               key={tag.id}
-              className="flex items-center gap-2 border border-[#FF6B35] bg-[#1A0F08] px-3 py-1 font-mono text-xs text-[#F5F5DC]"
+              className="flex items-center gap-2 border border-[#FF6B35] bg-card px-3 py-1 font-mono text-xs text-[#F5F5DC]"
             >
               {tag.name}
               <button
@@ -93,7 +93,7 @@ export function TagSelector({ selectedTagIds, onChange, availableTags: allTags }
         </Button>
 
         {showDropdown && (
-          <div className="absolute z-10 mt-2 w-full border border-[#FF6B35] bg-[#1A0F08]">
+          <div className="absolute z-10 mt-2 w-full border border-[#FF6B35] bg-card">
             <div className="border-b border-[#FF6B35] p-3">
               <div className="flex gap-2">
                 <Input
