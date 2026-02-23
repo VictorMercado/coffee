@@ -28,7 +28,6 @@ export default async function EditUserPage({
           user={{
             id: user.id,
             username: user.username,
-            email: user.email,
             role: user.role,
           }}
         />

@@ -12,7 +12,6 @@ export function CreateUserForm() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
   const [role, setRole] = useState<"USER" | "ADMIN">("USER");
 
   const createMutation = useMutation({
@@ -20,7 +19,6 @@ export function CreateUserForm() {
       createUser({
         username,
         password,
-        email: email || null,
         role,
       }),
     onSuccess: () => {
@@ -68,19 +66,6 @@ export function CreateUserForm() {
             placeholder="••••••"
             required
             minLength={6}
-            className="border-border px-4 py-3 font-mono text-sm text-[#F5F5DC] placeholder:text-[#F5F5DC]/30 focus-visible:ring-0 focus-visible:border-primary h-auto"
-          />
-        </div>
-        {/* Email */}
-        <div>
-          <label className="block font-mono text-xs text-primary mb-2">
-            EMAIL
-          </label>
-          <Input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="user@example.com"
             className="border-border px-4 py-3 font-mono text-sm text-[#F5F5DC] placeholder:text-[#F5F5DC]/30 focus-visible:ring-0 focus-visible:border-primary h-auto"
           />
         </div>

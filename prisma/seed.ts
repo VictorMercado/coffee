@@ -14,12 +14,11 @@ async function main() {
     update: {},
     create: {
       username: "admin",
-      email: "admin@orbitcoffee.com",
       password: hashedPassword,
       role: "ADMIN",
     },
   });
-  console.log(`✓ Admin user created: ${admin.email}`);
+  console.log(`✓ Admin user created: ${admin.username}`);
 
   // Create or update guest user
   console.log("Creating guest user...");
@@ -29,12 +28,11 @@ async function main() {
     update: {},
     create: {
       username: "guest",
-      email: "guest@orbitcoffee.com",
       password: guestPassword,
       role: "USER",
     },
   });
-  console.log(`✓ Guest user created: ${guest.email}`);
+  console.log(`✓ Guest user created: ${guest.username}`);
 
   // Create categories
   console.log("\nCreating categories...");

@@ -28,7 +28,7 @@ export async function POST(request: Request) {
 
   try {
     const json = await request.json();
-    const { username, password, role, email } = json;
+    const { username, password, role } = json;
 
     // Basic validation (or use zod schema here if preferred)
     if (!username || !password) {
@@ -49,17 +49,9 @@ export async function POST(request: Request) {
 
     const newUser = await UserRepo.createUser({
       username,
-      password, // Note: In a real app, password should be hashed! userRepo.createUser might handle it or we should do it here. 
-      // Assuming repo handles hashing or storage for this task scope, but good to note.
-      // Checking UserRepo.createUser implementation: it takes username, password, role.
+      password,
       role,
     });
-
-    // If email is provided, update it separately or ensure createUser handles it.
-    // UserRepo.createUser only takes username, password, role.
-    if (email) {
-      await UserRepo.updateUser(newUser.id, { email });
-    }
 
     return NextResponse.json(newUser, { status: 201 });
   } catch (error) {

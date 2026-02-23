@@ -6,7 +6,6 @@ export type UpdateUserInput = z.infer<typeof userUpdateRequestSchema>;
 export interface UserListItem {
   id: string;
   username: string;
-  email: string | null;
   role: string;
   createdAt: string;
   updatedAt: string;
@@ -35,7 +34,6 @@ export async function createUser(data: {
   username: string;
   password: string;
   role?: "USER" | "ADMIN";
-  email?: string | null;
 }): Promise<UserListItem> {
   const response = await fetch("/api/users", {
     method: "POST",

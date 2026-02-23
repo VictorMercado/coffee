@@ -15,7 +15,6 @@ export interface OrderListDTO {
   orderNumber: string;
   userId: string | null;
   customerName: string;
-  customerEmail: string | null;
   status: string;
   subtotal: number;
   tax: number;

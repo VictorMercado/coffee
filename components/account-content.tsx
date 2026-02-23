@@ -1,28 +1,27 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { signOut } from "next-auth/react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { Header } from "@/components/header"
-import { CartDrawer } from "@/components/cart-drawer"
-import { Button } from "@/components/ui/button"
-import { LogOut, User, Shield } from "lucide-react"
+import { useState } from "react";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Header } from "@/components/header";
+import { CartDrawer } from "@/components/cart-drawer";
+import { Button } from "@/components/ui/button";
+import { LogOut, User, Shield } from "lucide-react";
 
 interface AccountContentProps {
   user: {
-    id: string
-    username: string
-    email?: string | null
-    role: string
-  } | null
+    id: string;
+    username: string;
+    role: string;
+  } | null;
 }
 
 export function AccountContent({ user }: AccountContentProps) {
-  const router = useRouter()
-  const [isCartOpen, setIsCartOpen] = useState(false)
+  const router = useRouter();
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
-  const isGuest = user?.username === "guest"
+  const isGuest = user?.username === "guest";
 
   return (
     <div className="min-h-screen bg-background">
@@ -197,5 +196,5 @@ export function AccountContent({ user }: AccountContentProps) {
       </main>
       <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </div>
-  )
+  );
 }

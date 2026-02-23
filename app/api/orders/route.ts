@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { customerName, customerEmail, items, total } =
+    const { customerName, items, total } =
       validationResult.data;
 
     // Get userId if user is logged in
@@ -41,7 +41,6 @@ export async function POST(request: NextRequest) {
       orderNumber,
       userId,
       customerName,
-      customerEmail: customerEmail || null,
       subtotal,
       tax,
       total: subtotal + tax,

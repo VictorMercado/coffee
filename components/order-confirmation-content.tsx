@@ -6,7 +6,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { useSettings } from "@/lib/settings-store";
-import { CheckCircle2, MapPin, Mail } from "lucide-react";
+import { CheckCircle2, MapPin } from "lucide-react";
 
 interface OrderItem {
   id: string;
@@ -20,7 +20,6 @@ interface Order {
   id: string;
   orderNumber: string;
   customerName: string;
-  customerEmail: string | null;
   status: string;
   subtotal: number;
   tax: number;
@@ -117,16 +116,6 @@ export function OrderConfirmationContent({ order }: OrderConfirmationContentProp
                   <div className="font-mono text-sm text-foreground">{order.customerName}</div>
                 </div>
               </div>
-
-              {order.customerEmail && (
-                <div className="flex items-center gap-3">
-                  <Mail className="w-5 h-5 text-muted-foreground" />
-                  <div>
-                    <div className="font-mono text-xs text-muted-foreground">EMAIL</div>
-                    <div className="font-mono text-sm text-foreground">{order.customerEmail}</div>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
 

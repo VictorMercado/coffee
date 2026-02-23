@@ -30,7 +30,6 @@ interface OrderFormProps {
     orderNumber: string;
     userId: string | null;
     customerName: string;
-    customerEmail: string | null;
     status: string;
     subtotal: number;
     tax: number;
@@ -47,7 +46,6 @@ export function OrderForm({ orderId, initialData }: OrderFormProps) {
 
   const [userId, setUserId] = useState(initialData.userId || "");
   const [customerName, setCustomerName] = useState(initialData.customerName);
-  const [customerEmail, setCustomerEmail] = useState(initialData.customerEmail || "");
   const [status, setStatus] = useState(initialData.status);
   const [subtotal, setSubtotal] = useState(initialData.subtotal);
   const [tax, setTax] = useState(initialData.tax);
@@ -72,8 +70,7 @@ export function OrderForm({ orderId, initialData }: OrderFormProps) {
     mutation.mutate({
       userId: userId.trim() || null,
       customerName,
-      customerEmail: customerEmail.trim() || null,
-      status,
+      status: status as "PENDING" | "PREPARING" | "READY" | "COMPLETED" | "CANCELLED",
       subtotal,
       tax,
       total,
@@ -119,20 +116,6 @@ export function OrderForm({ orderId, initialData }: OrderFormProps) {
             value={customerName}
             onChange={(e) => setCustomerName(e.target.value)}
             required
-            className="mt-1 border-border font-mono text-foreground"
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="customerEmail" className="font-mono text-xs text-primary">
-            CUSTOMER EMAIL
-          </Label>
-          <Input
-            id="customerEmail"
-            type="email"
-            value={customerEmail}
-            onChange={(e) => setCustomerEmail(e.target.value)}
-            placeholder="Optional"
             className="mt-1 border-border font-mono text-foreground"
           />
         </div>

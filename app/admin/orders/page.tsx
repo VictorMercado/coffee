@@ -12,7 +12,6 @@ async function getOrders() {
     id: order.id,
     orderNumber: order.orderNumber,
     customerName: order.customerName,
-    customerEmail: order.customerEmail,
     status: order.status,
     subtotal: order.subtotal,
     tax: order.tax,

@@ -17,7 +17,6 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 interface User {
   id: string;
   username: string;
-  email?: string | null;
   role: string;
 }
 
@@ -34,7 +33,6 @@ export function CheckoutContent({ user }: CheckoutContentProps) {
 
   const [formData, setFormData] = useState({
     name: user.username === "guest" ? "guest" : user.username,
-    email: user.email ?? "",
   });
 
   const mutation = useMutation({
@@ -60,7 +58,6 @@ export function CheckoutContent({ user }: CheckoutContentProps) {
     setError("");
     mutation.mutate({
       customerName: formData.name,
-      customerEmail: formData.email || null,
       items: items.map((item) => ({
         menuItemId: item.id,
         quantity: item.quantity,
@@ -122,22 +119,6 @@ export function CheckoutContent({ user }: CheckoutContentProps) {
                       required
                       className="mt-1"
                       placeholder="Your name"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="email" className="font-mono text-xs text-muted-foreground">
-                      EMAIL
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) =>
-                        setFormData({ ...formData, email: e.target.value })
-                      }
-                      className="mt-1"
-                      placeholder="your.email@example.com"
                     />
                   </div>
                 </div>

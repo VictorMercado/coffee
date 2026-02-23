@@ -33,7 +33,6 @@ interface Order {
   id: string;
   orderNumber: string;
   customerName: string;
-  customerEmail: string | null;
   status: string;
   subtotal: number;
   tax: number;
@@ -201,11 +200,6 @@ export function OrdersList({ initialOrders }: OrdersListProps) {
                         <div className="font-mono text-sm text-[#F5F5DC]">
                           {order.customerName}
                         </div>
-                        {order.customerEmail && (
-                          <div className="font-mono text-xs text-[#F5F5DC]/60 mt-1">
-                            {order.customerEmail}
-                          </div>
-                        )}
                       </td>
                       <td className="px-4 py-3 font-mono text-sm text-[#F5F5DC]/80">
                         {order.itemCount} {order.itemCount === 1 ? "item" : "items"}
@@ -287,11 +281,6 @@ export function OrdersList({ initialOrders }: OrdersListProps) {
                   <div className="font-mono text-sm text-foreground">
                     {selectedOrder.customerName}
                   </div>
-                  {selectedOrder.customerEmail && (
-                    <div className="font-mono text-xs text-muted-foreground">
-                      {selectedOrder.customerEmail}
-                    </div>
-                  )}
                 </div>
               </div>
 

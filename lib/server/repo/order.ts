@@ -40,7 +40,6 @@ export interface CreateOrderData {
   orderNumber: string;
   userId: string | null;
   customerName: string;
-  customerEmail: string | null;
   subtotal: number;
   tax: number;
   total: number;
@@ -59,7 +58,6 @@ export async function createOrder(data: CreateOrderData) {
       orderNumber: data.orderNumber,
       userId: data.userId,
       customerName: data.customerName,
-      customerEmail: data.customerEmail,
       subtotal: data.subtotal,
       tax: data.tax,
       total: data.total,
@@ -83,7 +81,6 @@ export async function updateOrder(
   data: {
     userId?: string | null;
     customerName?: string;
-    customerEmail?: string | null;
     status?: string;
     subtotal?: number;
     tax?: number;

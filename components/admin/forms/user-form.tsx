@@ -11,7 +11,6 @@ interface UserFormProps {
   user: {
     id: string;
     username: string;
-    email: string | null;
     role: string;
   };
 }
@@ -19,13 +18,11 @@ interface UserFormProps {
 export function UserForm({ user }: UserFormProps) {
   const router = useRouter();
   const [role, setRole] = useState(user.role);
-  const [email, setEmail] = useState(user.email || "");
 
   const updateMutation = useMutation({
     mutationFn: () =>
       updateUser(user.id, {
         role: role as "USER" | "ADMIN",
-        email: email || null,
       }),
     onSuccess: () => {
       router.push("/admin/users");
@@ -53,20 +50,6 @@ export function UserForm({ user }: UserFormProps) {
         </div>
       </div>
 
-      {/* Email */}
-      <div>
-        <label className="block font-mono text-xs text-primary mb-2">
-          EMAIL
-        </label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="user@example.com"
-          className="w-full border border-border bg-[#2D1810] px-4 py-3 font-mono text-sm text-[#F5F5DC] placeholder:text-[#F5F5DC]/30 focus:outline-none focus:border-primary"
-        />
-      </div>
-
       {/* Role */}
       <div>
         <label className="block font-mono text-xs text-primary mb-2">
@@ -77,8 +60,8 @@ export function UserForm({ user }: UserFormProps) {
             type="button"
             onClick={() => setRole("USER")}
             className={`flex-1 border px-4 py-3 font-mono text-sm transition-colors ${role === "USER"
-                ? "border-primary bg-primary text-[#1A0F08]"
-                : "border-border bg-[#2D1810] text-[#F5F5DC]/60 hover:bg-[#3D2820]"
+              ? "border-primary bg-primary text-[#1A0F08]"
+              : "border-border bg-[#2D1810] text-[#F5F5DC]/60 hover:bg-[#3D2820]"
               }`}
           >
             USER
@@ -87,8 +70,8 @@ export function UserForm({ user }: UserFormProps) {
             type="button"
             onClick={() => setRole("ADMIN")}
             className={`flex-1 border px-4 py-3 font-mono text-sm transition-colors ${role === "ADMIN"
-                ? "border-primary bg-primary text-[#1A0F08]"
-                : "border-border bg-[#2D1810] text-[#F5F5DC]/60 hover:bg-[#3D2820]"
+              ? "border-primary bg-primary text-[#1A0F08]"
+              : "border-border bg-[#2D1810] text-[#F5F5DC]/60 hover:bg-[#3D2820]"
               }`}
           >
             ADMIN

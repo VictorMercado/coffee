@@ -1,16 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/server/auth";
 import * as OrderRepo from "@/lib/server/repo/order";
+import * as UserRepo from "@/lib/server/repo/user";
 
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
 
-    if (!session || !session.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    let userId: string | null = null;
+
+    if (session?.user) {
+      userId = session.user.id;
+    } else {
+      // No session — look up the shared guest user
+      const guestUser = await UserRepo.findUserByUsername("guest");
+      if (guestUser) {
+        userId = guestUser.id;
+      }
     }
 
-    const orders = await OrderRepo.findOrdersByUserId(session.user.id);
+    if (!userId) {
+      return NextResponse.json([], { status: 200 });
+    }
+
+    const orders = await OrderRepo.findOrdersByUserId(userId);
 
     return NextResponse.json(orders);
   } catch (error) {
@@ -21,3 +34,4 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+

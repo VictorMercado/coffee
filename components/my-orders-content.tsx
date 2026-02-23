@@ -8,12 +8,11 @@ import { Button } from "@/components/ui/button";
 import { CartDrawer } from "@/components/cart-drawer";
 import { useSettings } from "@/lib/settings-store";
 import { fetchMyOrders } from "@/lib/client/api";
-import { Clock, CheckCircle2, XCircle, Package, ChevronDown, ChevronUp } from "lucide-react";
+import { Clock, CheckCircle2, XCircle, Package, ChevronDown, ChevronUp, RefreshCw } from "lucide-react";
 
 interface User {
   id: string;
   username: string;
-  email?: string | null;
   role: string;
 }
 
@@ -69,7 +68,7 @@ export function MyOrdersContent({ user }: MyOrdersContentProps) {
   const [expandedOrders, setExpandedOrders] = useState<Set<string>>(new Set());
   const { settings } = useSettings();
 
-  const { data: orders = [], isLoading: loading } = useQuery({
+  const { data: orders = [], isLoading: loading, refetch, isFetching } = useQuery({
     queryKey: ["myOrders"],
     queryFn: fetchMyOrders,
     refetchInterval: 30000,
@@ -118,9 +117,20 @@ export function MyOrdersContent({ user }: MyOrdersContentProps) {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="font-mono text-3xl sm:text-4xl tracking-widest text-foreground">
-              <span className="text-primary">MY</span> ORDERS
-            </h1>
+            <div className="flex items-center gap-3 justify-between">
+              <h1 className="font-mono text-3xl sm:text-4xl tracking-widest text-foreground">
+                <span className="text-primary">MY</span> ORDERS
+              </h1>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => refetch()}
+                disabled={isFetching}
+                className="font-mono"
+              >
+                <RefreshCw className={`w-4 h-4 ${isFetching ? "animate-spin" : ""}`} />
+              </Button>
+            </div>
             <p className="text-muted-foreground mt-2">
               Track your order status and history
             </p>

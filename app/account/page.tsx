@@ -11,7 +11,6 @@ export default async function AccountPage() {
   const user = session?.user || {
     id: "guest",
     username: "guest",
-    email: null,
     role: "USER",
   };
 

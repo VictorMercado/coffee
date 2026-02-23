@@ -13,7 +13,6 @@ export async function findAllUsers() {
     select: {
       id: true,
       username: true,
-      email: true,
       role: true,
       createdAt: true,
       updatedAt: true,
@@ -38,7 +37,7 @@ export async function createUser(data: {
 
 export async function updateUser(
   id: string,
-  data: { role?: string; email?: string | null; }
+  data: { role?: string; }
 ) {
   return prisma.user.update({
     where: { id },
@@ -46,7 +45,6 @@ export async function updateUser(
     select: {
       id: true,
       username: true,
-      email: true,
       role: true,
       createdAt: true,
       updatedAt: true,

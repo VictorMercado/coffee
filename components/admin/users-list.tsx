@@ -9,7 +9,6 @@ import { Pencil, Trash2, Shield, User as UserIcon, Plus } from "lucide-react";
 interface UserItem {
   id: string;
   username: string;
-  email: string | null;
   role: string;
   createdAt: string;
 }
@@ -57,9 +56,6 @@ export function UsersList({ initialUsers }: UsersListProps) {
                 USERNAME
               </th>
               <th className="px-4 py-3 text-left font-mono text-xs text-primary">
-                EMAIL
-              </th>
-              <th className="px-4 py-3 text-left font-mono text-xs text-primary">
                 ROLE
               </th>
               <th className="px-4 py-3 text-left font-mono text-xs text-primary">
@@ -73,7 +69,7 @@ export function UsersList({ initialUsers }: UsersListProps) {
           <tbody>
             {initialUsers.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center font-mono text-[#F5F5DC]/60">
+                <td colSpan={4} className="px-4 py-8 text-center font-mono text-[#F5F5DC]/60">
                   NO USERS FOUND
                 </td>
               </tr>
@@ -94,9 +90,6 @@ export function UsersList({ initialUsers }: UsersListProps) {
                         {user.username}
                       </span>
                     </div>
-                  </td>
-                  <td className="px-4 py-3 font-mono text-sm text-[#F5F5DC]/80">
-                    {user.email || "—"}
                   </td>
                   <td className="px-4 py-3">
                     <span

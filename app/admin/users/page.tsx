@@ -10,7 +10,6 @@ async function getUsers() {
   return users.map((user) => ({
     id: user.id,
     username: user.username,
-    email: user.email,
     role: user.role,
     createdAt: user.createdAt.toISOString(),
   }));

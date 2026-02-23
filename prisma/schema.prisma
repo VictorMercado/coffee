@@ -14,7 +14,6 @@ datasource db {
 model User {
   id        String   @id @default(cuid())
   username  String   @unique
-  email     String?  // Optional email
   password  String   // Hashed password
   role      String   @default("USER") // USER or ADMIN
   createdAt DateTime @default(now())
@@ -143,7 +142,6 @@ model Order {
   orderNumber    String      @unique // Human-readable order number
   userId         String?     // Optional - null for guest orders
   customerName   String
-  customerEmail  String?
   status         String      @default("PENDING") // PENDING, PREPARING, READY, COMPLETED, CANCELLED
   subtotal       Float
   tax            Float

@@ -21,12 +21,10 @@ export const createUserRequestSchema = z.object({
     .regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   role: z.enum(["USER", "ADMIN"]).optional(),
-  email: z.string().email().optional().nullable(),
 });
 
 export const userUpdateRequestSchema = z.object({
   role: z.enum(["USER", "ADMIN"]),
-  email: z.string().email().optional().nullable(),
 });
 
 // --- Categories ---
@@ -111,7 +109,6 @@ export const orderItemRequestSchema = z.object({
 
 export const orderRequestSchema = z.object({
   customerName: z.string().min(1, "Name is required"),
-  customerEmail: z.string().email().optional().nullable(),
   items: z.array(orderItemRequestSchema).min(1, "Order must have at least one item"),
   total: z.number().positive(),
 });
@@ -123,7 +120,6 @@ export const orderStatusRequestSchema = z.object({
 export const orderUpdateRequestSchema = z.object({
   userId: z.string().nullable().optional(),
   customerName: z.string().min(1).optional(),
-  customerEmail: z.string().email().nullable().optional(),
   status: z.enum(["PENDING", "PREPARING", "READY", "COMPLETED", "CANCELLED"]).optional(),
   subtotal: z.number().positive().optional(),
   tax: z.number().min(0).optional(),

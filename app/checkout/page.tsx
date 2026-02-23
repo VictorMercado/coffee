@@ -10,7 +10,6 @@ export default async function CheckoutPage() {
   const user = session?.user || {
     id: "guest",
     username: "guest",
-    email: null,
     role: "USER",
   };
 
