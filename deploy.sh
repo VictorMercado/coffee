@@ -10,7 +10,7 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-# 1. Get the absolute path to the directory where this script lives
+# Step 1. Get the absolute path to the directory where this script lives
 WORK_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P)
 cd "$WORK_DIR"
 
@@ -23,7 +23,7 @@ fi
 echo "$(date) - Deployment started" >> $LOG_FILE
 set -e
 
-# 2. Verify env file exists at /etc/coffee/.env
+# Step 2. Verify env file exists at /etc/coffee/.env
 if [ ! -f "$ENV_FILE" ]; then
     echo -e "${YELLOW}⚠️  No .env file found at $ENV_FILE${NC}"
     echo "$(date) - Deployment failed: No .env file found at $ENV_FILE" >> $LOG_FILE
@@ -38,20 +38,15 @@ echo -e "${YELLOW}📥 Pulling latest changes...${NC}"
 git pull --rebase origin main
 
 echo -e "${YELLOW}🔨 Building and starting containers...${NC}"
-# Removed 'down' to prevent downtime during build
+# Step 3. Removed 'down' to prevent downtime during build
 if [[ "$1" == "--no-cache" ]]; then
     docker compose up -d --build --no-cache --remove-orphans
 else
     docker compose up -d --build --remove-orphans
 fi
 
-# Step 5: Run pending database migrations
-echo -e "${YELLOW}🗃️  Running database migrations...${NC}"
-docker compose exec coffee npx prisma migrate deploy
-echo -e "${GREEN}✅ Migrations applied!${NC}"
-
-# Step 6: Cleanup - This is crucial for your disk space
 echo -e "${YELLOW}🧹 Cleaning up old images...${NC}"
+# Step 4: Cleanup - This is crucial for your disk space
 docker image prune -f
 
 # Log deployment timestamp
@@ -60,8 +55,8 @@ echo "$(date) - Deployment complete" >> $LOG_FILE
 echo -e "${GREEN}✅ Deployment complete!${NC}"
 docker compose ps
 
-# Step 6: Show recent logs
 echo -e "${YELLOW}📋 Recent logs:${NC}"
+# Step 5: Show recent logs
 docker compose logs --tail=20
 
 echo -e "${GREEN}✅ Deployment complete!${NC}"

@@ -1,23 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/server/auth";
 import * as OrderRepo from "@/lib/server/repo/order";
-import * as UserRepo from "@/lib/server/repo/user";
+import { GUEST_USER_ID } from "@/lib/constants";
 
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
 
-    let userId: string | null = null;
-
-    if (session?.user) {
-      userId = session.user.id;
-    } else {
-      // No session — look up the shared guest user
-      const guestUser = await UserRepo.findUserByUsername("guest");
-      if (guestUser) {
-        userId = guestUser.id;
-      }
-    }
+    // Use session user ID, or fall back to hardcoded guest ID
+    const userId = session?.user?.id ?? GUEST_USER_ID;
 
     if (!userId) {
       return NextResponse.json([], { status: 200 });

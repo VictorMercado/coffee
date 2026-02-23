@@ -3,6 +3,7 @@ import { auth } from "@/lib/server/auth";
 import { orderRequestSchema } from "@/lib/validations";
 import * as OrderRepo from "@/lib/server/repo/order";
 import * as MenuItemRepo from "@/lib/server/repo/menu-item";
+import { GUEST_USER_ID } from "@/lib/constants";
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,8 +21,8 @@ export async function POST(request: NextRequest) {
     const { customerName, items, total } =
       validationResult.data;
 
-    // Get userId if user is logged in
-    const userId = session?.user?.id ?? null;
+    // Get userId - fall back to hardcoded guest ID if no session
+    const userId = session?.user?.id ?? GUEST_USER_ID;
 
     // Calculate subtotal and tax
     const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
