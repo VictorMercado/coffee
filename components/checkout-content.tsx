@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
@@ -26,6 +26,7 @@ interface CheckoutContentProps {
 
 export function CheckoutContent({ user }: CheckoutContentProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { items, total, clearCart } = useCart();
   const { settings } = useSettings();
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -38,6 +39,8 @@ export function CheckoutContent({ user }: CheckoutContentProps) {
   const mutation = useMutation({
     mutationFn: createOrder,
     onSuccess: (order) => {
+      // Invalidate the orders query to refresh the list on the homepage
+      queryClient.invalidateQueries({ queryKey: ["my-orders"] });
       clearCart();
       router.push(`/order-confirmation/${order.id}`);
     },
