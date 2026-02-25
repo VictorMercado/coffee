@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Switch } from "@/components/ui/switch";
-import { updateSizeStatus } from "@/lib/client/api";
+import { fetchSizes, updateSizeStatus } from "@/lib/client/api";
 import { Pencil, Plus } from "lucide-react";
 import { Button } from "../ui/button";
 
@@ -25,32 +25,48 @@ interface SizesListProps {
 export function SizesList({ sizes: initialSizes }: SizesListProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [sizes, setSizes] = useState(initialSizes);
   const [error, setError] = useState("");
+
+  const { data: sizes = initialSizes } = useQuery({
+    queryKey: ["sizes", { admin: true }],
+    queryFn: () => fetchSizes(true),
+    initialData: initialSizes,
+  });
 
   const mutation = useMutation({
     mutationFn: ({ sizeId, isActive }: { sizeId: string; isActive: boolean; }) =>
       updateSizeStatus(sizeId, isActive),
     onMutate: async ({ sizeId, isActive }) => {
-      // Optimistic update
-      setSizes((prev) =>
-        prev.map((size) =>
+      // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+      await queryClient.cancelQueries({ queryKey: ["sizes", { admin: true }] });
+
+      // Snapshot the previous value
+      const previousSizes = queryClient.getQueryData<Size[]>(["sizes", { admin: true }]);
+
+      // Optimistically update to the new value
+      queryClient.setQueryData<Size[]>(["sizes", { admin: true }], (old) =>
+        old?.map((size) =>
           size.id === sizeId ? { ...size, isActive } : size
         )
       );
+
+      // Return a context object with the snapshotted value
+      return { previousSizes };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["sizes"] });
       router.refresh();
     },
-    onError: (error: Error, variables) => {
+    onError: (error: Error, __variables, context) => {
       // Revert optimistic update on error
-      setSizes((prev) =>
-        prev.map((size) =>
-          size.id === variables.sizeId ? { ...size, isActive: !variables.isActive } : size
-        )
-      );
+      if (context?.previousSizes) {
+        queryClient.setQueryData(["sizes", { admin: true }], context.previousSizes);
+      }
       setError(error.message || "Failed to update size");
+    },
+    onSettled: () => {
+      // Always refetch after error or success:
+      queryClient.invalidateQueries({ queryKey: ["sizes", { admin: true }] });
     },
   });
 

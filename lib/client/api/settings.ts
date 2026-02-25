@@ -5,7 +5,7 @@ import type { SizeListDTO, SizeDTO } from "@/lib/server/dtos";
 
 // ── Re-export server DTOs as client-friendly names ─────────────
 
-export type Size = SizeListDTO;         // public API shape (simplified)
+export type Sizes = SizeListDTO;         // public API shape (simplified)
 export type SizeDetail = SizeDTO;       // admin/full shape
 
 // ── Input type derived from Zod schema ─────────────────────────
@@ -40,8 +40,9 @@ export async function updateSettings(settings: Settings): Promise<Settings> {
 }
 
 // Fetch sizes
-export async function fetchSizes(): Promise<Size[]> {
-  const response = await fetch("/api/sizes");
+export async function fetchSizes(includeInactive = false): Promise<Sizes> {
+  const url = includeInactive ? "/api/sizes?includeInactive=true" : "/api/sizes";
+  const response = await fetch(url);
   if (!response.ok) {
     throw new Error("Failed to fetch sizes");
   }

@@ -13,8 +13,9 @@ export type CreateTagInput = z.infer<typeof tagRequestSchema>;
 // ── Fetchers ───────────────────────────────────────────────────
 
 // Fetch all tags
-export async function fetchTags(): Promise<Tag[]> {
-  const response = await fetch("/api/tags");
+export async function fetchTags(includeInactive = false): Promise<Tag[]> {
+  const url = includeInactive ? "/api/tags?includeInactive=true" : "/api/tags";
+  const response = await fetch(url);
   if (!response.ok) {
     throw new Error("Failed to fetch tags");
   }

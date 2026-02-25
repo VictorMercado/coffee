@@ -27,8 +27,9 @@ export type CreateMenuItemInput = z.infer<typeof menuItemRequestSchema>;
 // ── Fetchers ───────────────────────────────────────────────────
 
 // Fetch all menu items (public)
-export async function fetchMenuItems(): Promise<MenuItem[]> {
-  const response = await fetch("/api/menu-items", { cache: "no-store" });
+export async function fetchMenuItems(includeInactive = false): Promise<MenuItem[]> {
+  const url = includeInactive ? "/api/menu-items?includeInactive=true" : "/api/menu-items";
+  const response = await fetch(url, { cache: "no-store" });
   if (!response.ok) {
     throw new Error("Failed to fetch menu items");
   }
