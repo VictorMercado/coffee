@@ -15,8 +15,7 @@ import { TagSelector } from "../tag-selector";
 import { createMenuItem, updateMenuItem, uploadMenuItemImage } from "@/lib/client/api/menu-items";
 import type { CreateMenuItemInput } from "@/lib/client/api/menu-items";
 import { toast } from "sonner";
-import Link from "next/link";
-import { Eye } from "lucide-react";
+import { FormActions } from "./form-actions";
 
 interface Category {
   id: string;
@@ -156,34 +155,12 @@ export function MenuItemForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       {/* Form Actions */}
-      <div className="flex justify-between border border-border bg-card p-6">
-        <div className="flex gap-4">
-          <Button
-            type="submit"
-            disabled={saveMutation.isPending}
-            className="bg-primary font-mono text-background hover:bg-primary/80"
-          >
-            {saveMutation.isPending ? "SAVING..." : menuItemId ? "UPDATE ITEM" : "CREATE ITEM"}
-          </Button>
-          <Button
-            type="button"
-            onClick={() => router.back()}
-            variant="outline"
-            className="border-border font-mono text-primary"
-          >
-            CANCEL
-          </Button>
-        </div>
-        <Button
-          type="button"
-          variant="outline"
-          className="border-border font-mono text-primary"
-        >
-          <Link href={`/menu/${menuItemId}`}>
-            <Eye />
-          </Link>
-        </Button>
-      </div>
+      <FormActions
+        isPending={saveMutation.isPending}
+        submitText={menuItemId ? "UPDATE ITEM" : "CREATE ITEM"}
+        onCancel={() => router.back()}
+        viewUrl={menuItemId ? `/menu/${menuItemId}` : undefined}
+      />
       {/* Basic Information */}
       <div className="space-y-4 border border-border bg-card p-6">
         <h3 className="font-mono text-lg text-primary">BASIC INFORMATION</h3>
@@ -379,23 +356,11 @@ export function MenuItemForm({
       </div>
 
       {/* Form Actions */}
-      <div className="flex gap-4">
-        <Button
-          type="submit"
-          disabled={saveMutation.isPending}
-          className="bg-primary font-mono text-background hover:bg-primary/80"
-        >
-          {saveMutation.isPending ? "SAVING..." : menuItemId ? "UPDATE ITEM" : "CREATE ITEM"}
-        </Button>
-        <Button
-          type="button"
-          onClick={() => router.back()}
-          variant="outline"
-          className="border-border font-mono text-primary"
-        >
-          CANCEL
-        </Button>
-      </div>
+      <FormActions
+        isPending={saveMutation.isPending}
+        submitText={menuItemId ? "UPDATE ITEM" : "CREATE ITEM"}
+        onCancel={() => router.back()}
+      />
     </form>
   );
 }
