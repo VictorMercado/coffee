@@ -2,11 +2,11 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { createTag, deleteTag } from "@/lib/client/api"
+import { fetchTags, createTag, deleteTag } from "@/lib/client/api"
 import { Trash2, Plus, X } from "lucide-react"
 import {
   Dialog,
@@ -31,7 +31,13 @@ interface TagsListProps {
 export function TagsList({ initialTags }: TagsListProps) {
   const router = useRouter()
   const queryClient = useQueryClient()
-  const [tags, setTags] = useState<Tag[]>(initialTags)
+
+  const { data: tags = initialTags } = useQuery({
+    queryKey: ["tags", { includeInactive: true }],
+    queryFn: () => fetchTags(true),
+    initialData: initialTags,
+  })
+
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [tagToDelete, setTagToDelete] = useState<Tag | null>(null)

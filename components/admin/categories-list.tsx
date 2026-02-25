@@ -1,9 +1,9 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
-import { deleteCategory } from "@/lib/client/api"
+import { fetchCategories, deleteCategory } from "@/lib/client/api"
 import { Plus, Pencil, Trash2 } from "lucide-react"
 
 interface Category {
@@ -23,6 +23,12 @@ interface CategoriesListProps {
 export function CategoriesList({ initialCategories }: CategoriesListProps) {
   const router = useRouter()
   const queryClient = useQueryClient()
+
+  const { data: categories = initialCategories } = useQuery({
+    queryKey: ["categories", { includeInactive: true }],
+    queryFn: () => fetchCategories(true),
+    initialData: initialCategories,
+  })
 
   const deleteMutation = useMutation({
     mutationFn: deleteCategory,
@@ -86,7 +92,7 @@ export function CategoriesList({ initialCategories }: CategoriesListProps) {
             </tr>
           </thead>
           <tbody>
-            {initialCategories.length === 0 ? (
+            {categories.length === 0 ? (
               <tr>
                 <td colSpan={7} className="px-4 py-8 text-center">
                   <div className="font-mono text-sm text-[#F5F5DC]/60">
@@ -95,7 +101,7 @@ export function CategoriesList({ initialCategories }: CategoriesListProps) {
                 </td>
               </tr>
             ) : (
-              initialCategories.map((category) => (
+              categories.map((category) => (
                 <tr
                   key={category.id}
                   className="border-b border-border hover:bg-[#2D1810]"

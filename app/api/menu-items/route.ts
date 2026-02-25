@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const category = searchParams.get("category");
     const featured = searchParams.get("featured");
-    const includeInactive = searchParams.get("admin") === "true";
+    const includeInactive = searchParams.get("includeInactive") === "true" || searchParams.get("admin") === "true";
 
     const menuItems = await MenuItemRepo.findAllMenuItems({
       category: category || undefined,

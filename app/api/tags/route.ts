@@ -3,8 +3,16 @@ import { checkAdminAuth } from "@/lib/server/auth-helper";
 import { tagRequestSchema } from "@/lib/validations";
 import * as TagRepo from "@/lib/server/repo/tag";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const includeInactive = searchParams.get("includeInactive") === "true";
+
+    if (includeInactive) {
+      const tags = await TagRepo.findAllTagsWithCounts();
+      return NextResponse.json(tags);
+    }
+
     const tags = await TagRepo.findAllTags();
     return NextResponse.json(tags);
   } catch (error) {

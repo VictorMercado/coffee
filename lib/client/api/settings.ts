@@ -40,8 +40,9 @@ export async function updateSettings(settings: Settings): Promise<Settings> {
 }
 
 // Fetch sizes
-export async function fetchSizes(): Promise<Size[]> {
-  const response = await fetch("/api/sizes");
+export async function fetchSizes(includeInactive = false): Promise<Size[]> {
+  const url = includeInactive ? "/api/sizes?includeInactive=true" : "/api/sizes";
+  const response = await fetch(url);
   if (!response.ok) {
     throw new Error("Failed to fetch sizes");
   }

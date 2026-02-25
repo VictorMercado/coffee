@@ -19,14 +19,14 @@ This document tracks the migration from `useEffect` + `fetch` to React Query (Ta
 - ✅ `components/admin/ingredient-form.tsx` - useMutation for create/update
 - ✅ `components/my-orders-content.tsx` - useQuery for fetching user orders
 - ✅ `app/admin/settings/page.tsx` - useQuery + useMutation
+- ✅ `components/admin/sizes-list.tsx` - useQuery for fetch, useMutation for status update with optimistic update
+- ✅ `components/checkout-content.tsx` - useMutation for create order
+- ✅ `components/admin/categories-list.tsx` - useQuery for fetch, useMutation for delete
+- ✅ `components/admin/tags-list.tsx` - useQuery for fetch, useMutation for create/delete
 
 ## 🚧 In Progress / TODO
 
 ### High Priority
-- ⏳ `components/admin/sizes-list.tsx` - Update size status mutations
-- ⏳ `components/checkout-content.tsx` - Create order mutation
-- ⏳ `components/admin/categories-list.tsx` - Category CRUD mutations
-- ⏳ `components/admin/tags-list.tsx` - Tags CRUD mutations
 - ⏳ `components/admin/menu-items-list.tsx` - Menu items delete mutation
 - ⏳ `components/admin/orders-list.tsx` - Update order status mutation
 - ⏳ `components/admin/category-form.tsx` - Create/update category mutation

@@ -15,8 +15,9 @@ export type UpdateCategoryInput = CreateCategoryInput & { id: string; };
 // ── Fetchers ───────────────────────────────────────────────────
 
 // Fetch all categories (public)
-export async function fetchCategories(): Promise<Category[]> {
-  const response = await fetch("/api/categories");
+export async function fetchCategories(includeInactive = false): Promise<Category[]> {
+  const url = includeInactive ? "/api/categories?includeInactive=true" : "/api/categories";
+  const response = await fetch(url);
   if (!response.ok) {
     throw new Error("Failed to fetch categories");
   }

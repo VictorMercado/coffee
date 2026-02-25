@@ -3,8 +3,16 @@ import { auth } from "@/lib/server/auth";
 import { sizeRequestSchema } from "@/lib/validations";
 import * as SizeRepo from "@/lib/server/repo/size";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const includeInactive = searchParams.get("includeInactive") === "true";
+
+    if (includeInactive) {
+      const sizes = await SizeRepo.findAllSizesWithCounts();
+      return NextResponse.json(sizes);
+    }
+
     const sizes = await SizeRepo.findActiveSizes();
 
     const transformedSizes = sizes.map((size) => ({
